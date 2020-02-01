@@ -5,15 +5,20 @@ Repo dédié au projet des méthodes de corrélation croisée adaptées à l'opt
 
 ### Installation de l'installateur de librairies pip
 Dans l'invité de commandes entrer : 
+<pre><code>
 python get-pip.py
+</code></pre>
 
 ### Installation des librairies
+<pre><code>
 pip install scipy
 pip install matplotlib
+</code></pre>
 
 ### Installation de rasterio manuellement (visualisation des fichiers raster)
-
+<pre><code>
 pip install rasterio-1.1.2-cp37-cp37m-win_amd64.whl
+</code></pre>
 
 ## Installation de GDAL pour Windows
 
@@ -22,10 +27,12 @@ https://sandbox.idre.ucla.edu/sandbox/tutorials/installing-gdal-for-windows
 
 ### Etape 2 
 Dans l'invité de commandes entrer : 
+<pre><code>
 setx GDAL_DATA "C:\Program Files\GDAL\gdal-data"
 setx GDAL_DRIVER_PATH "C:\Program Files\GDAL\gdalplugins"
 setx PROJ_LIB "C:\Program Files\GDAL\projlib"
 setx PYTHONPATH "C:\Program Files\GDAL\"
+</code></pre>
 
 ### Visualiser des fichiers raster
 https://automating-gis-processes.github.io/CSC18/lessons/L6/plotting-raster.html
