@@ -5,7 +5,7 @@ Created on Tue Jan 28 20:09:08 2020
 @author: Mikael
 """
 
-from osgeo import gdal
+#from osgeo import gdal
 import numpy as np
 import rasterio
 from rasterio.plot import show
@@ -28,6 +28,7 @@ fig, (ax1, ax2) = plt.subplots(1,2)
 im1 = ax1.imshow(raster.read(2)[:400,800:])
 im2 = ax2.imshow(raster.read(1)[:400,800:])
 plt.show()
+plt.savefig("sample1")
 
 ##
 ##raster = gdal.Open(filepath)
