@@ -6,7 +6,7 @@ Repo dédié au projet des méthodes de corrélation croisée adaptées à l'opt
 Utiliser un facteur de correction angulaire pour corriger les erreurs des images radar. On procède par superposition de l'image du facteur de correction avec l'image radar.
 Le but du projet et de proposer le meilleur moyen de superposer les deux images.
 
-Les erreurs topographiques sont liées au choix de la fréquence du radar. Cette dernière étant trop grande, l'influence de la topographie est trop important.
+Les erreurs topographiques sont liées au choix de la fréquence du radar. Cette dernière étant trop grande, l'influence de la topographie est trop importante.
 Le facteur de correction est calculé à l'aide des modèles numériques de surface (MNS) issues des missions SRTM et TDX)
 
 Pour superposer les images on propose d'utiliser deux méthodes principales : 
@@ -17,19 +17,16 @@ Pour superposer les images on propose d'utiliser deux méthodes principales :
 
 ### Installation de l'installateur de librairies pip
 Dans l'invité de commandes entrer : 
-<pre><code>
-python get-pip.py
+<pre><code>python get-pip.py
 </code></pre>
 
 ### Installation des librairies
-<pre><code>
-pip install scipy
+<pre><code>pip install scipy
 pip install matplotlib
 </code></pre>
 
 ### Installation de rasterio manuellement (visualisation des fichiers raster)
-<pre><code>
-pip install rasterio-1.1.2-cp37-cp37m-win_amd64.whl
+<pre><code>pip install rasterio-1.1.2-cp37-cp37m-win_amd64.whl
 </code></pre>
 
 ## Installation de GDAL pour Windows
@@ -39,8 +36,7 @@ https://sandbox.idre.ucla.edu/sandbox/tutorials/installing-gdal-for-windows
 
 ### Etape 2 
 Dans l'invité de commandes entrer : 
-<pre><code>
-setx GDAL_DATA "C:\Program Files\GDAL\gdal-data"
+<pre><code>setx GDAL_DATA "C:\Program Files\GDAL\gdal-data"
 setx GDAL_DRIVER_PATH "C:\Program Files\GDAL\gdalplugins"
 setx PROJ_LIB "C:\Program Files\GDAL\projlib"
 setx PYTHONPATH "C:\Program Files\GDAL\"
