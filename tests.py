@@ -27,8 +27,9 @@ fig, (ax1, ax2) = plt.subplots(1,2)
 
 im1 = ax1.imshow(raster.read(2)[:400,800:])
 im2 = ax2.imshow(raster.read(1)[:400,800:])
-plt.show()
 plt.savefig("sample1")
+plt.show()
+
 
 ##
 ##raster = gdal.Open(filepath)
