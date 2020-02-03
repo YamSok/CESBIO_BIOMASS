@@ -1,6 +1,18 @@
 # CESBIO_BIOMASS
 Repo dédié au projet des méthodes de corrélation croisée adaptées à l'optimisation des corrections topographiques en imagerie radar à synthèse d'ouverture : applications aux images aéroportées bande P pour la mission BIOMASS
 
+## Objectif du projet
+
+Utiliser un facteur de correction angulaire pour corriger les erreurs des images radar. On procède par superposition de l'image du facteur de correction avec l'image radar.
+Le but du projet et de proposer le meilleur moyen de superposer les deux images.
+
+Les erreurs topographiques sont liées au choix de la fréquence du radar. Cette dernière étant trop grande, l'influence de la topographie est trop important.
+Le facteur de correction est calculé à l'aide des modèles numériques de surface (MNS) issues des missions SRTM et TDX)
+
+Pour superposer les images on propose d'utiliser deux méthodes principales : 
+- convolution, fourier, correlation croisée
+- Recalage par algorithme de gradient 
+
 ## Installation des librairies Python
 
 ### Installation de l'installateur de librairies pip
