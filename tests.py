@@ -22,13 +22,18 @@ raster = rasterio.open(filepath)
 #show((raster, 1), cmap='Reds')
 #show((raster, 2), cmap='inferno')
 
-fig, (ax1, ax2) = plt.subplots(1,2)
+#fig, (ax1, ax2) = plt.subplots(1,2)
 
-
-im1 = ax1.imshow(raster.read(2)[:400,800:])
-im2 = ax2.imshow(raster.read(1)[:400,800:])
-plt.savefig("sample1")
-plt.show()
+band1 = raster.read(1)
+band2 = raster.read(2)
+#np.savetxt("band1.txt",band1)
+a = np.loadtxt("band1.txt")
+plt.imshow(a)
+plt.savefig("a.png")
+#im1 = ax1.imshow(raster.read(2)[:400,800:])
+#im2 = ax2.imshow(raster.read(1)[:400,800:])
+#plt.savefig("sample1")
+#plt.show()
 
 
 ##
