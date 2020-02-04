@@ -44,3 +44,7 @@ setx PYTHONPATH "C:\Program Files\GDAL\"
 
 ### Visualiser des fichiers raster
 https://automating-gis-processes.github.io/CSC18/lessons/L6/plotting-raster.html
+
+### Corrélations croisées
+
+https://askcodez.com/correlation-croisee-entre-deux-images.html
