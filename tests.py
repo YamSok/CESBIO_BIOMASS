@@ -7,28 +7,32 @@ Created on Tue Jan 28 20:09:08 2020
 
 #from osgeo import gdal
 import numpy as np
-import rasterio
-from rasterio.plot import show
+#import rasterio
+#from rasterio.plot import show
 import matplotlib.pyplot as plt
 ### From stackoverflow, to make imshow subplot with individuals colorbars
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import MultipleLocator
 ####
-
-filepath = r"../Data/img_tif.tif"
-raster = rasterio.open(filepath)
+#
+#filepath = r"../Data/img_tif.tif"
+#raster = rasterio.open(filepath)
 
 #show((raster, 1), cmap='Reds')
 #show((raster, 2), cmap='inferno')
 
 #fig, (ax1, ax2) = plt.subplots(1,2)
 
-band1 = raster.read(1)
-band2 = raster.read(2)
-np.savetxt("band2.txt",band2)
-#a = np.loadtxt("band1.txt")
+#band1 = raster.read(1)
+#band2 = raster.read(2)
+#np.savetxt("band2.txt",band2)
+band1 = np.loadtxt("band1.txt")
+band2 = np.loadtxt("band2.txt")
 
+plt.imshow(band1)
+plt.colorbar()
+plt.savefig("band1test.png")
 #plt.imshow(a)
 #plt.savefig("a.png")
 #im1 = ax1.imshow(raster.read(2)[:400,800:])
