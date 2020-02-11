@@ -8,7 +8,7 @@ Created on Tue Jan 28 20:09:08 2020
 #from osgeo import gdal
 import numpy as np
 #import rasterio
-#from rasterio.plot import show
+#from rasterio.plot import shows
 import matplotlib.pyplot as plt
 ### From stackoverflow, to make imshow subplot with individuals colorbars
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -32,11 +32,11 @@ band2 = np.loadtxt("band2.txt")
 
 plt.imshow(10*np.log(band2))
 
-plt.savefig("band2_big.png")
+plt.savefig("test.png")
 
 plt.imshow(band1)
 
-plt.savefig("band1_big.png")
+#plt.savefig("band1_big.png")
 #plt.savefig("band1test.png")
 #plt.imshow(a)
 #plt.savefig("a.png")
