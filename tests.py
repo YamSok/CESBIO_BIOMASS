@@ -32,11 +32,11 @@ band2 = np.loadtxt("band2.txt")
 
 plt.imshow(10*np.log(band2))
 
-plt.savefig("band2_big.png")
+plt.savefig("band2_test.png")
 
 plt.imshow(band1)
 
-plt.savefig("band1_big.png")
+plt.savefig("band1_test.png")
 #plt.savefig("band1test.png")
 #plt.imshow(a)
 #plt.savefig("a.png")
