@@ -13,6 +13,11 @@ Pour superposer les images on propose d'utiliser deux méthodes principales :
 - convolution, fourier, correlation croisée
 - Recalage par algorithme de gradient 
 
+## Ressources utiles
+
+Article issue du sujet du projet sur les méthodes de comparaisons d'images : https://ieeexplore.ieee.org/document/4603110
+
+
 ## Installation des librairies Python
 
 ### Installation de l'installateur de librairies pip
@@ -48,3 +53,5 @@ https://automating-gis-processes.github.io/CSC18/lessons/L6/plotting-raster.html
 ### Corrélations croisées
 
 https://askcodez.com/correlation-croisee-entre-deux-images.html
+
+
