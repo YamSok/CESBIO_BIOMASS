@@ -12,3 +12,11 @@ owever, prior to stacking, each 2-D FFT magnitude image was passed through a “
 
 
 Therefore, if the frequency spectrum is decomposed appropriately, different texture will have different features. Denote by d(j)k (j=1, 2, … , J; k=h,v,d) the k-component of the detail sub-images of a grayscale image at the jth decomposition stage, where h, v, and d denote horizontal, vertical, and diagonal, respectively, as shown in Fig. 12. When each detail sub-image is treated as a matrix, then the energy of the detail sub-image is defined as(7)Ejk=‖d(j)k‖F2where ‖·‖F denotes the Frobenius norm. Often this is divided by the number of pixels, yielding normalized energy. When these energies are employed as elements of the textural feature vector, it is called the wavelet energy signature [6],
+
+
+
+
+
+
+Rez :
+207x207, 5px axis 0/ 5px axis 1, 5px shift subblock
