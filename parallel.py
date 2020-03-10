@@ -106,7 +106,7 @@ def decoupage(b2,b1,bs,r,start,end):
     #print("rank : " + str(rank) + " | count : " + str(count))
     return tabx,taby,count
 
-def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r):
+def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
     n,m = np.shape(b2)
     fig,ax = plt.subplots(1,2,figsize=(10,10))
     ax[0].imshow(b2)
@@ -117,7 +117,7 @@ def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r):
             if np.sqrt(tabx[i * (m//bs) + j]**2 + taby[i * (m//bs) + j]**2) == r :
                 c =  'k'
                 l = 2 
-            elif np.sqrt(tabx[i * (m//bs) + j]**2 + taby[i * (m//bs) + j]**2)  <= 15:
+            elif np.sqrt(tabx[i * (m//bs) + j]**2 + taby[i * (m//bs) + j]**2)  <= seuil:
                 c = 'm'
                 l = 1
                 count +=1
@@ -131,7 +131,7 @@ def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r):
             ax[1].add_patch(arrow)
             ax[0].add_patch(rect)
             ax[1].add_patch(rect2)
-    plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r"+".png")
+    plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)))
 
 def main():
@@ -140,8 +140,8 @@ def main():
     band2 = np.loadtxt("band2.txt")
     print("Importation terminée")
     # DECALAGE "GROSSIER" de BAND 2 par rapport à BAND 1
-    axis0 = 3
-    axis1 = 2
+    axis0 = 15
+    axis1 = 15
     b1,b2 = shiftSelec(band1,band2,axis0,axis1)
     bs = 207 # Block size
     # Distribution des blocs sur les processes
@@ -160,6 +160,7 @@ def main():
     #
     print("rank : " + str(rank) + " | start : " + str(start) + " | end : " + str(end))
     r = 25
+    seuil = 15
     tabx,taby,count = decoupage(b2,b1,bs,r,start,end)
     mpi.COMM_WORLD.barrier()
     #c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM)
@@ -177,7 +178,7 @@ def main():
         # np.savetxt("ty.txt", ty)
         # tx = np.loadtxt("tx.txt")
         # ty = np.loadtxt("ty.txt")
-        visualize(b1,b2,tx,ty,bs,axis0,axis1,r)
+        visualize(b1,b2,tx,ty,bs,axis0,axis1,r,seuil)
 
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
 size = mpi.COMM_WORLD.Get_size() # Nombre de process"
