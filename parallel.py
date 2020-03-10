@@ -131,8 +131,24 @@ def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
             ax[1].add_patch(arrow)
             ax[0].add_patch(rect)
             ax[1].add_patch(rect2)
+    plt.tight_layout()
     plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)))
+
+def countCorrect(tabx,taby,seuil, verbose=False):
+    count = 0
+    dist = []
+    for i in range(len(tabx)):
+        distance = np.sqrt(tabx[i]**2 + taby[i]**2)
+        if verbose :
+            print("Décalage du block " +str(i)+ " : %.2f" % (np.sqrt(tabx[i]**2 + taby[i]**2)*5) + " m.")
+        if distance < seuil:  #distance inférieure à 50 px (c'est beaucoup)
+            count +=1
+        dist.append(distance)    
+    if verbose:
+        print(str(count)+" corrects sur "+ str(len(tabx)) + " avec une marge de " + str(seuil * 5) +" m.")
+    print("Moyenne des déplacements : " + str(np.mean(distance * 5)))
+    return count, np.mean(distance*5)
 
 def main():
 
@@ -161,24 +177,25 @@ def main():
     print("rank : " + str(rank) + " | start : " + str(start) + " | end : " + str(end))
     r = 25
     seuil = 15
-    tabx,taby,count = decoupage(b2,b1,bs,r,start,end)
-    mpi.COMM_WORLD.barrier()
-    #c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM)
-    tabx = mpi.COMM_WORLD.allgather(tabx)
-    taby = mpi.COMM_WORLD.allgather(taby)
-    if rank == 0:
-        tx = np.zeros(nb)
-        ty = np.zeros(nb)
-        for k in range(size):
-            for i in range(len(tabx[0])):
-                tx[k * len(tabx[0]) + i] = tabx[k][i]
-                ty[k * len(taby[0]) + i] = taby[k][i]
+    # tabx,taby,count = decoupage(b2,b1,bs,r,start,end)
+    # mpi.COMM_WORLD.barrier()
+    # #c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM)
+    # tabx = mpi.COMM_WORLD.allgather(tabx)
+    # taby = mpi.COMM_WORLD.allgather(taby)
+    # if rank == 0:
+    #     tx = np.zeros(nb)
+    #     ty = np.zeros(nb)
+    #     for k in range(size):
+    #         for i in range(len(tabx[0])):
+    #             tx[k * len(tabx[0]) + i] = tabx[k][i]
+    #             ty[k * len(taby[0]) + i] = taby[k][i]
 
-        # np.savetxt("tx.txt", tx)
-        # np.savetxt("ty.txt", ty)
-        # tx = np.loadtxt("tx.txt")
-        # ty = np.loadtxt("ty.txt")
-        visualize(b1,b2,tx,ty,bs,axis0,axis1,r,seuil)
+    #     np.savetxt("decoup/tx.txt", tx)
+    #     np.savetxt("decoup/ty.txt", ty)
+    tx = np.loadtxt("decoup/tx.txt")
+    ty = np.loadtxt("decoup/ty.txt")
+    countCorrect(tx,ty,seuil, verbose=True)
+        #visualize(b1,b2,tx,ty,bs,axis0,axis1,r,seuil)
 
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
 size = mpi.COMM_WORLD.Get_size() # Nombre de process"
