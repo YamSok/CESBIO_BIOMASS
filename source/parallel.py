@@ -153,7 +153,6 @@ def countCorrect(tabx,taby,seuil, verbose=False):
     print("Moyenne des déplacements : " + str(np.mean(distance * 5)))
     return count, np.mean(distance*5)
 
-def crossCorrelation(axis0,axis1,b1,b2,bs,r,seuil):
 def main(axis0,axis1,bs,seuil):
     band1 = np.load("../data/band1.npy")
     band2 = np.load("../data/band2.npy")
