@@ -138,18 +138,18 @@ def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
     plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)))
 
-def countCorrect(tabx,taby,seuil, verbose=False):
+def countCorrect(tab,seuil,nb, verbose=False):
     count = 0
     dist = []
-    for i in range(len(tabx)):
-        distance = np.sqrt(tabx[i]**2 + taby[i]**2)
+    for i in range(nb):
+        distance = np.sqrt(tab[0][i]**2 + tab[1][i]**2)
         if verbose :
-            print("Décalage du block " +str(i)+ " : %.2f" % (np.sqrt(tabx[i]**2 + taby[i]**2)*5) + " m.")
+            print("Décalage du block " +str(i)+ " : %.2f" % (np.sqrt(tab[0][i]**2 + tab[1][i]**2)*5) + " m.")
         if distance < seuil:  #distance inférieure à 50 px (c'est beaucoup)
             count +=1
         dist.append(distance)
     if verbose:
-        print(str(count)+" corrects sur "+ str(len(tabx)) + " avec une marge de " + str(seuil * 5) +" m.")
+        print(str(count)+" corrects sur "+ str(nb) + " avec une marge de " + str(seuil * 5) +" m.")
     print("Moyenne des déplacements : " + str(np.mean(distance * 5)))
     return count, np.mean(distance*5)
 
@@ -177,7 +177,7 @@ def main(axis0,axis1,bs,seuil):
     taby = mpi.COMM_WORLD.allgather(taby)
 
     if rank == 0:
-        tab = np.zeros((2,bs))
+        tab = np.zeros((2,nb))
         # tx = np.zeros(nb)
         # ty = np.zeros(nb)
         for k in range(size):
