@@ -4,4 +4,6 @@ misc/
 
 biblio/
 source/.ipynb_checkpoints
+source/__pycache__
 *.png
+
