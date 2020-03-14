@@ -1,6 +1,7 @@
 results/
 decoup/
 misc/
-data/
+
 biblio/
+source/.ipynb_checkpoints
 *.png

@@ -32,10 +32,10 @@ def displayImg(original,template,corr,x,y,r):
     fig, (ax_orig, ax_template, ax_corr, ax_corr2) = plt.subplots(1, 4,figsize=(10, 20))
     ax_orig.imshow(original)
     ax_orig.set_title('Original')
-    
+
     ax_template.imshow(template)
     ax_template.set_title('Template')
-    
+
     ax_corr.imshow(corr)
     nn , mm = np.shape(corr)
     nc = nn // 2
@@ -43,19 +43,19 @@ def displayImg(original,template,corr,x,y,r):
     rect = patches.Rectangle((nc - r,mc - r),2 * r,2 * r,linewidth=1,edgecolor='r',facecolor='none')
     ax_corr.add_patch(rect)
     ax_corr.set_title('Cross-correlation')
-    
+
     rect2 = patches.Rectangle((nc - r,mc - r),2 * r,2 * r,linewidth=1,edgecolor='r',facecolor='none')
     ax_orig.add_patch(rect2)
-    
+
     ax_orig.plot(x, y, 'ro')
     ax_orig.plot(n/2,n/2, 'rx')
     #ax_template.plot(x, y, 'ro')
-    
+
     ax_corr2.imshow(corr[nc - r:nc + r, mc - r:mc + r])
     ax_corr2.set_title('Cross-correlation [' + str(r) + 'x' + str(r) + "]")
     ax_corr2.plot(x - nc + r, y - mc + r, 'ro')
     fig.show()
-    
+
     print("(x,y) = ("+str(x)+','+str(y)+')' )
 
 def decalageBloc(original, template, r):
@@ -76,7 +76,7 @@ def decalageBloc(original, template, r):
     #print(x,y)
     y = y + mc - r
     x = x + nc - r
-    
+
     return orig, temp, corr, x, y
 
 def decoupage(b2,b1,bs,r,start,end):
@@ -116,7 +116,7 @@ def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
         for j in range(m//bs) :
             if np.sqrt(tabx[i * (m//bs) + j]**2 + taby[i * (m//bs) + j]**2) == r :
                 c =  'k'
-                l = 2 
+                l = 2
             elif np.sqrt(tabx[i * (m//bs) + j]**2 + taby[i * (m//bs) + j]**2)  <= seuil:
                 c = 'm'
                 l = 1
@@ -124,7 +124,7 @@ def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
             else:
                 c = 'r'
                 l = 2
-            
+
             rect = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=l,edgecolor=c,facecolor='none')
             rect2 = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=l,edgecolor=c,facecolor='none')
             arrow = patches.Arrow(j*bs + bs//2,i*bs + bs//2 ,tabx[i * (m//bs) + j],taby[i * (m//bs) + j], width=0.7,edgecolor='r',facecolor='none')
@@ -144,7 +144,7 @@ def countCorrect(tabx,taby,seuil, verbose=False):
             print("Décalage du block " +str(i)+ " : %.2f" % (np.sqrt(tabx[i]**2 + taby[i]**2)*5) + " m.")
         if distance < seuil:  #distance inférieure à 50 px (c'est beaucoup)
             count +=1
-        dist.append(distance)    
+        dist.append(distance)
     if verbose:
         print(str(count)+" corrects sur "+ str(len(tabx)) + " avec une marge de " + str(seuil * 5) +" m.")
     print("Moyenne des déplacements : " + str(np.mean(distance * 5)))
@@ -152,9 +152,8 @@ def countCorrect(tabx,taby,seuil, verbose=False):
 
 def main():
 
-    band1 = np.loadtxt("band1.txt")
-    band2 = np.loadtxt("band2.txt")
-    print("Importation terminée")
+    band1 = np.load("../data/band1.npy")
+    band2 = np.load("../data/band2.npy")
     # DECALAGE "GROSSIER" de BAND 2 par rapport à BAND 1
     axis0 = 15
     axis1 = 15
@@ -177,24 +176,23 @@ def main():
     print("rank : " + str(rank) + " | start : " + str(start) + " | end : " + str(end))
     r = 25
     seuil = 15
-    # tabx,taby,count = decoupage(b2,b1,bs,r,start,end)
-    # mpi.COMM_WORLD.barrier()
-    # #c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM)
-    # tabx = mpi.COMM_WORLD.allgather(tabx)
-    # taby = mpi.COMM_WORLD.allgather(taby)
-    # if rank == 0:
-    #     tx = np.zeros(nb)
-    #     ty = np.zeros(nb)
-    #     for k in range(size):
-    #         for i in range(len(tabx[0])):
-    #             tx[k * len(tabx[0]) + i] = tabx[k][i]
-    #             ty[k * len(taby[0]) + i] = taby[k][i]
-
-    #     np.savetxt("decoup/tx.txt", tx)
-    #     np.savetxt("decoup/ty.txt", ty)
-    tx = np.loadtxt("decoup/tx.txt")
-    ty = np.loadtxt("decoup/ty.txt")
-    countCorrect(tx,ty,seuil, verbose=True)
+    tabx,taby,count = decoupage(b2,b1,bs,r,start,end)
+    mpi.COMM_WORLD.barrier()
+    #c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM)
+    tabx = mpi.COMM_WORLD.allgather(tabx)
+    taby = mpi.COMM_WORLD.allgather(taby)
+    if rank == 0:
+        tx = np.zeros(nb)
+        ty = np.zeros(nb)
+        for k in range(size):
+            for i in range(len(tabx[0])):
+                tx[k * len(tabx[0]) + i] = tabx[k][i]
+                ty[k * len(taby[0]) + i] = taby[k][i]
+        np.save("../decoup/tx.npy", tx)
+        np.save("../decoup/ty.npy", ty)
+    # tx = np.load("../decoup/tx.npy")
+    # ty = np.load("../decoup/ty.npy")
+    # countCorrect(tx,ty,seuil, verbose=True)
         #visualize(b1,b2,tx,ty,bs,axis0,axis1,r,seuil)
 
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
