@@ -15,6 +15,9 @@ mpl.rcParams['figure.dpi'] = 300
 import warnings
 warnings.filterwarnings("ignore")
 
+def afficherlol():
+    a = np.array([1,2])
+    print("lol")
 
 def shiftSelec(im1,im2,axis0,axis1):
     band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
@@ -150,15 +153,13 @@ def countCorrect(tabx,taby,seuil, verbose=False):
     print("Moyenne des déplacements : " + str(np.mean(distance * 5)))
     return count, np.mean(distance*5)
 
-def main():
-
+def crossCorrelation(axis0,axis1,b1,b2,bs,r,seuil):
+def main(axis0,axis1,bs,seuil):
     band1 = np.load("../data/band1.npy")
     band2 = np.load("../data/band2.npy")
-    # DECALAGE "GROSSIER" de BAND 2 par rapport à BAND 1
-    axis0 = 15
-    axis1 = 15
     b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-    bs = 207 # Block size
+    # Block size
+    r = 25
     # Distribution des blocs sur les processes
     n,m = np.shape(b2)
     nb = (n // bs) * (m // bs) # Nombre de blocs dans l'image
@@ -169,30 +170,27 @@ def main():
         end = nb
         nd = end - start
 
-    #Parcours des blocks
-    # if rank == 0 :
-    #     print("Nombre de blocs : " + str(nb))
-    #
-    print("rank : " + str(rank) + " | start : " + str(start) + " | end : " + str(end))
-    r = 25
-    seuil = 15
+    #print("rank : " + str(rank) + " | start : " + str(start) + " | end : " + str(end))
     tabx,taby,count = decoupage(b2,b1,bs,r,start,end)
     mpi.COMM_WORLD.barrier()
     #c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM)
     tabx = mpi.COMM_WORLD.allgather(tabx)
     taby = mpi.COMM_WORLD.allgather(taby)
+
     if rank == 0:
-        tx = np.zeros(nb)
-        ty = np.zeros(nb)
+        tab = np.zeros((2,bs))
+        # tx = np.zeros(nb)
+        # ty = np.zeros(nb)
         for k in range(size):
             for i in range(len(tabx[0])):
-                tx[k * len(tabx[0]) + i] = tabx[k][i]
-                ty[k * len(taby[0]) + i] = taby[k][i]
-        np.save("../decoup/tx.npy", tx)
-        np.save("../decoup/ty.npy", ty)
-    # tx = np.load("../decoup/tx.npy")
-    # ty = np.load("../decoup/ty.npy")
-    # countCorrect(tx,ty,seuil, verbose=True)
+                tab[0][k * len(tabx[0]) + i] = tabx[k][i]
+                tab[1][k * len(taby[0]) + i] = tabx[k][i]
+                # tx[k * len(tabx[0]) + i] = tabx[k][i]
+                # ty[k * len(taby[0]) + i] = taby[k][i]
+        np.save("../decoup/tab.npy", tab)
+        # np.save("../decoup/tx.npy", tx)
+        # np.save("../decoup/ty.npy", ty)
+
         #visualize(b1,b2,tx,ty,bs,axis0,axis1,r,seuil)
 
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
@@ -200,7 +198,12 @@ size = mpi.COMM_WORLD.Get_size() # Nombre de process"
 #print("rank : " + str(rank) + " | size : " + str(size))
 if rank == 0:
     t0 = time.time()
-main()
+
+axis0 = 15
+axis1 = 15
+seuil = 15
+bs = 207
+main(axis0,axis1,bs,seuil)
 mpi.COMM_WORLD.barrier()
 if rank == 0:
     t1 = time.time()
