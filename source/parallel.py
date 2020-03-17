@@ -14,7 +14,12 @@ import time
 mpl.rcParams['figure.dpi'] = 300
 import warnings
 warnings.filterwarnings("ignore")
-
+"""
+Remarque :
+axe vertical = axe 0
+axe horizontal = axe 1
+np.shape de la forme (y,x)
+"""
 
 def shiftSelec(im1,im2,axis0,axis1):
     band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
