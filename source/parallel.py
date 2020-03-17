@@ -15,9 +15,6 @@ mpl.rcParams['figure.dpi'] = 300
 import warnings
 warnings.filterwarnings("ignore")
 
-def afficherlol():
-    a = np.array([1,2])
-    print("lol")
 
 def shiftSelec(im1,im2,axis0,axis1):
     band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
