@@ -200,8 +200,8 @@ size = mpi.COMM_WORLD.Get_size() # Nombre de process"
 if rank == 0:
     t0 = time.time()
 
-axis0 = 15
-axis1 = 15
+axis0 = 0
+axis1 = 0
 seuil = 15
 bs = 207
 main(axis0,axis1,bs,seuil)
