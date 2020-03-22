@@ -261,8 +261,8 @@ def main(axis0,axis1,bs,seuil):
                 tx[k * len(tabx[0]) + i] = tabx[k][i]
                 ty[k * len(taby[0]) + i] = taby[k][i]
         #np.save("../decoup/tab_superpose.npy", tab)
-        np.save("../decoup/tx_"+str(dt.timestamp(dt.now))".npy", tx)
-        np.save("../decoup/ty_"+str(dt.timestamp(dt.now))".npy", ty)
+        np.save("../decoup/tx_"+str(dt.timestamp(dt.now))+".npy", tx)
+        np.save("../decoup/ty_"+str(dt.timestamp(dt.now))+".npy", ty)
         visualizeSuperpose(b1,b2,tx,ty,bs,axis0,axis1,r,seuil)
 
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
