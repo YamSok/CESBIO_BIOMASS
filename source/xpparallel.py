@@ -233,7 +233,8 @@ def main(axis0,axis1,bs,f,seuil):
         end = nb
         nd = end - start
 
-    #print("rank : " + str(rank) + " | start : " + str(start) + " | end : " + str(end))
+    print("Nombre de blocs à traiter : " + str(nb))
+    print("rank : " + str(rank) + " | start : " + str(start) + " | end : " + str(end))
     tabx,taby,count = decoupageSuperpose(b2,b1,bs,r,f,start,end)
     #print(str(count)+" BLOCS CORRECTS")
     mpi.COMM_WORLD.barrier()
