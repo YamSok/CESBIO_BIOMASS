@@ -200,7 +200,8 @@ def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
             # ax[0].add_patch(rect)
             # ax[1].add_patch(rect2)
     plt.tight_layout()
-    plt.savefig("../results/sup_"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
+    plt.savefig("verif.png")
+    #plt.savefig("../results/sup_"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     # plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)))
 
@@ -267,19 +268,19 @@ size = mpi.COMM_WORLD.Get_size() # Nombre de process"
 if rank == 0:
     t0 = time.time()
 
-axis0 = 15
-axis1 = 15
-seuil = 15
-bs = 256
-f = 2
-r = 25
-# band1 = np.load("../data/band1.npy")
-# band2 = np.load("../data/band2.npy")
-# b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-# tab = np.load("../decoup/tab_superpose.npy")
-# print(np.shape(tab))
-# visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
-main(axis0,axis1,bs,f,seuil)
+    axis0 = 15
+    axis1 = 15
+    seuil = 15
+    bs = 256
+    f = 2
+    r = 25
+    band1 = np.load("../data/band1.npy")
+    band2 = np.load("../data/band2.npy")
+    b1,b2 = shiftSelec(band1,band2,axis0,axis1)
+    tab = np.load("../decoup/tab_superpose.npy")
+    #print(np.shape(tab))
+    visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
+#main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
 if rank == 0:
