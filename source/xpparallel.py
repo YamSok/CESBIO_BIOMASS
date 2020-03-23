@@ -225,7 +225,7 @@ def main(axis0,axis1,bs,f,seuil):
     r = 25
     # Distribution des blocs sur les processes
     n,m = np.shape(b2)
-    nb = 2*(n // bs) * 2*(m // bs) # Nombre de blocs dans l'image
+    nb = (2*(n // bs)-1) * (2*(m // bs)-1) # Nombre de blocs dans l'image
     nd = nb // size # Nombre de blocs à traiter par process
     start =  rank * nd
     end = (rank + 1) * nd
@@ -262,19 +262,19 @@ size = mpi.COMM_WORLD.Get_size() # Nombre de process"
 if rank == 0:
     t0 = time.time()
 
-    axis0 = 15
-    axis1 = 15
-    seuil = 15
-    bs = 256
-    f = 2
-    r = 25
-    band1 = np.load("../data/band1.npy")
-    band2 = np.load("../data/band2.npy")
-    b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-    tab = np.load("../decoup/tab.npy")
-    print(np.shape(tab))
-    #isualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
-#main(axis0,axis1,bs,f,seuil)
+axis0 = 15
+axis1 = 15
+seuil = 15
+bs = 256
+f = 2
+r = 25
+# band1 = np.load("../data/band1.npy")
+# band2 = np.load("../data/band2.npy")
+#b1,b2 = shiftSelec(band1,band2,axis0,axis1)
+# tab = np.load("../decoup/tab.npy")
+# print(np.shape(tab))
+# #visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
+main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
 if rank == 0:
