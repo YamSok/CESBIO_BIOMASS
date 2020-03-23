@@ -202,7 +202,7 @@ def visualizeSuperpose(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
             # ax[0].add_patch(rect)
             # ax[1].add_patch(rect2)
     plt.tight_layout()
-    plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count" + "| band1s band1" + ".png")
+    plt.savefig("../results/sup_"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count" + "| band1s band1" + ".png")
     # plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)))
 
@@ -224,8 +224,8 @@ def countCorrect(tab,seuil,nb, verbose=False):
 
 # PROGRAMME PRINCIPAL
 def main(axis0,axis1,bs,seuil):
-    band1 = np.load("band1.npy")
-    band2 = np.load("band2.npy")
+    band1 = np.load("../data/band1.npy")
+    band2 = np.load("../data/band2.npy")
     b1,b2 = shiftSelec(band1,band1,axis0,axis1)
     # Block size
     r = 25
@@ -258,7 +258,7 @@ def main(axis0,axis1,bs,seuil):
                 #tab[1][k * len(taby[0]) + i] = tabx[k][i]
                 tx[k * len(tabx[0]) + i] = tabx[k][i]
                 ty[k * len(taby[0]) + i] = taby[k][i]
-        # np.save("../decoup/tab.npy", tab)
+        #np.save("../decoup/tab_superpose.npy", tab)
         # np.save("../decoup/tx.npy", tx)
         # np.save("../decoup/ty.npy", ty)
         visualizeSuperpose(b1,b2,tx,ty,bs,axis0,axis1,r,seuil)
@@ -279,4 +279,4 @@ mpi.COMM_WORLD.barrier()
 
 if rank == 0:
     t1 = time.time()
-    print("Temps d'exec : " + str(t1 - t0) + " s.")
+    print("Temps d'exec : " + str((t1 - t0)//60) + "min" + str((t1 - t0)%60))
