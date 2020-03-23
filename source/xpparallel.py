@@ -233,8 +233,8 @@ def main(axis0,axis1,bs,f,seuil):
     n,m = np.shape(b2)
     nb = (2*(n // bs) - 1) * (2*(m // bs) - 1) # Nombre de blocs dans l'image
     nd = nb // size # Nombre de blocs à traiter par process
-    start =  rank * nd + rank * ((rank - 1) < (nb % size))
-    end = (rank + 1) * nd + (rank + 1) * ((rank - 1) < (nb % size))
+    start =  rank * nd + rank * ((rank - 1) < (nb % size)) + (rank)*((rank - 1) >= (nb % size))
+    end = (rank + 1) * nd + (rank + 1) * ((rank - 1) < (nb % size)) + (rank)*((rank - 1) >= (nb % size))
     if (rank == size - 1): # Le dernier process va jusqu'au bout au cas où nb % size != 0
         end = nb
         nd = end - start
