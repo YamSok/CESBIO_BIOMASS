@@ -272,7 +272,7 @@ if rank == 0:
     band1 = np.load("../data/band1.npy")
     band2 = np.load("../data/band2.npy")
     b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-    tab = np.load("../decoup/tab.npy")
+    tab = np.load("../decoup/tab_superpose.npy")
     print(np.shape(tab))
 #visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
 #main(axis0,axis1,bs,f,seuil)
