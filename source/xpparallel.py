@@ -272,7 +272,8 @@ if rank == 0:
     band2 = np.load("../data/band2.npy")
     b1,b2 = shiftSelec(band1,band2,axis0,axis1)
     tab = np.load("../decoup/tab.npy")
-    visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
+    print(np.shape(tab))
+    #isualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
 #main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
