@@ -241,7 +241,7 @@ def main(axis0,axis1,bs,f,seuil):
 
     #print("Nombre de blocs à traiter : " + str(nb))
     #print("rank : " + str(rank) + " | start : " + str(start) + " | end : " + str(end))
-    tabx,taby,count = decoupageSuperpose(b2,b1,bs,r,f,start,end)
+    #tabx,taby,count = decoupageSuperpose(b2,b1,bs,r,f,start,end)
     #print(str(count)+" BLOCS CORRECTS")
     mpi.COMM_WORLD.barrier()
 
@@ -249,6 +249,7 @@ def main(axis0,axis1,bs,f,seuil):
     tabx = mpi.COMM_WORLD.allgather(tabx)
     taby = mpi.COMM_WORLD.allgather(taby)
     #print(len(tabx))
+    print("nb : " nb)
     if rank == 0:
         tab = np.zeros((2,nb))
         # tx = np.zeros(nb)
@@ -265,7 +266,6 @@ def main(axis0,axis1,bs,f,seuil):
         visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
 size = mpi.COMM_WORLD.Get_size() # Nombre de process"
-#print("rank : " + str(rank) + " | size : " + str(size))
 if rank == 0:
     t0 = time.time()
 
