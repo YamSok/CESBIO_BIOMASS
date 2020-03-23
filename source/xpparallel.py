@@ -127,7 +127,7 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
     #i = 0 # pour les tests
         for j in range(f * (m//bs)):
             if i * f *(m//bs) + j  >= start and i * f *(m//bs) + j < end: # PAS SUR
-                bandfBlock = np.copy(bf[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
+                bandfBlock = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
                 band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
                 templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])
                 orig,temp,corr,x,y = decalageBloc(bandfBlock,templateBlock,r)
