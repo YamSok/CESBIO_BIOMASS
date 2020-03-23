@@ -253,9 +253,8 @@ def main(axis0,axis1,bs,f,seuil):
                 #tx[k * len(tabx[0]) + i] = tabx[k][i]
                 #ty[k * len(taby[0]) + i] = taby[k][i]
         np.save("../decoup/tab_superpose.npy", tab)
-        # np.save("../decoup/tx_.npy", tx)
-        # np.save("../decoup/ty_.npy", ty)
-        #visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,2,seuil)
+        tab = np.load("../decoup/tab.npy")
+        visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
 
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
 size = mpi.COMM_WORLD.Get_size() # Nombre de process"
@@ -263,13 +262,18 @@ size = mpi.COMM_WORLD.Get_size() # Nombre de process"
 if rank == 0:
     t0 = time.time()
 
-axis0 = 15
-axis1 = 15
-seuil = 15
-bs = 256
-f = 2
-
-main(axis0,axis1,bs,f,seuil)
+    axis0 = 15
+    axis1 = 15
+    seuil = 15
+    bs = 256
+    f = 2
+    r = 25
+    band1 = np.load("../data/band1.npy")
+    band2 = np.load("../data/band2.npy")
+    b1,b2 = shiftSelec(band1,band2,axis0,axis1)
+    tab = np.load("../decoup/tab.npy")
+    visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
+#main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
 if rank == 0:
