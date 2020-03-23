@@ -256,7 +256,7 @@ def main(axis0,axis1,bs,f,seuil):
         for k in range(size):
             for i in range(len(tabx[0])):
                 tab[0][k * len(tabx[0]) + i] = tabx[k][i]
-                tab[1][k * len(taby[0]) + i] = tabx[k][i]
+                tab[1][k * len(taby[0]) + i] = taby[k][i]
                 #tx[k * len(tabx[0]) + i] = tabx[k][i]
                 #ty[k * len(taby[0]) + i] = taby[k][i]
         np.save("../decoup/tab_superpose2.npy", tab)
