@@ -249,18 +249,20 @@ def main(axis0,axis1,bs,f,seuil):
     tabx = mpi.COMM_WORLD.allgather(tabx)
     taby = mpi.COMM_WORLD.allgather(taby)
     #print(len(tabx))
-    print("nb : " nb)
+    print(tabx[15])
+    print("nb : " + str(nb))
     if rank == 0:
         tab = np.zeros((2,nb))
         # tx = np.zeros(nb)
         # ty = np.zeros(nb)
         for k in range(size):
-            for i in range(len(tabx[0])):
-                print(k * len(tabx[0]) + i)
+            for i in range(len(tabx[k])):
+
                 tab[0][k * len(tabx[0]) + i] = tabx[k][i]
                 tab[1][k * len(taby[0]) + i] = taby[k][i]
                 #tx[k * len(tabx[0]) + i] = tabx[k][i]
                 #ty[k * len(taby[0]) + i] = taby[k][i]
+        print(tab)
         np.save("../decoup/tab_superpose2.npy", tab)
         #tab = np.load("../decoup/tab.npy")
         visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
