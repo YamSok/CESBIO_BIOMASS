@@ -231,10 +231,10 @@ def main(axis0,axis1,bs,f,seuil):
     r = 25
     # Distribution des blocs sur les processes
     n,m = np.shape(b2)
-    nb = (2*(n // bs)-1) * (2*(m // bs)-1) # Nombre de blocs dans l'image
+    nb = (2*(n // bs)) * (2*(m // bs)) # Nombre de blocs dans l'image
     nd = nb // size # Nombre de blocs à traiter par process
-    start =  rank * nd + (rank)*(rank <= (nb % size - 1))
-    end = (rank + 1) * nd + (rank <= (nb % size - 1))
+    start =  rank * nd
+    end = (rank + 1) * nd
     if (rank == size - 1): # Le dernier process va jusqu'au bout au cas où nb % size != 0
         end = nb
         nd = end - start
