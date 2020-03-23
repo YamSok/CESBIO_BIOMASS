@@ -191,7 +191,7 @@ def visualizeSuperpose(b1,b2,tabx,taby,bs,axis0,axis1,r,f,seuil):
                 l = 2
             # rect = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=l,edgecolor=c,facecolor='none')
             # rect2 = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=l,edgecolor=c,facecolor='none')
-            arrow = patches.Arrow( int((j/2) * bs + bs // 2 ) , int((i/2) *bs + bs//2) ,tabx[i * 2*(m//bs) + j],taby[i * 2*(m//bs) + j], width=0.7,edgecolor=c,facecolor='none')
+            arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tabx[i * f*(m//bs) + j],taby[i * f * (m//bs) + j], width=0.7,edgecolor=c,facecolor='none')
             ax[1].add_patch(arrow)
             # ax[0].add_patch(rect)
             # ax[1].add_patch(rect2)
