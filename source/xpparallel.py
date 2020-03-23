@@ -123,14 +123,14 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
     taby=[] # stockage décalage y
     count = 0 # compte des blocs corrects
 
-    for i in range(f * (n//bs)):
+    for i in range(f * (n//bs) - 1):
     #i = 0 # pour les tests
-        for j in range(f * (m//bs)):
-            if i * f *(m//bs) + j  >= start and i * f *(m//bs) + j < end: # PAS SUR --> c'est niquel
-                bandfBlock = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
+        for j in range(f * (m//bs)-1):
+            if i * (f * (m // bs) - 1) + j  >= start and i * (f * (m // bs) - 1) + j < end:
+                band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
                 band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
                 templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])
-                orig,temp,corr,x,y = decalageBloc(bandfBlock,templateBlock,r)
+                orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock,r)
                 xm = x-bs/2
                 ym = y-bs/2
                 tabx.append(xm)
@@ -267,19 +267,19 @@ size = mpi.COMM_WORLD.Get_size() # Nombre de process"
 if rank == 0:
     t0 = time.time()
 
-    axis0 = 15
-    axis1 = 15
-    seuil = 15
-    bs = 256
-    f = 2
-    r = 25
-    band1 = np.load("../data/band1.npy")
-    band2 = np.load("../data/band2.npy")
-    b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-    tab = np.load("../decoup/tab_superpose.npy")
-    print(np.shape(tab))
-    visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
-#main(axis0,axis1,bs,f,seuil)
+axis0 = 15
+axis1 = 15
+seuil = 15
+bs = 256
+f = 2
+r = 25
+# band1 = np.load("../data/band1.npy")
+# band2 = np.load("../data/band2.npy")
+# b1,b2 = shiftSelec(band1,band2,axis0,axis1)
+# tab = np.load("../decoup/tab_superpose.npy")
+# print(np.shape(tab))
+# visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
+main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
 if rank == 0:
