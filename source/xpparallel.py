@@ -116,35 +116,27 @@ def decoupage(b2,b1,bs,r,start,end):
     return tabx,taby,count
 
 # APPLICATION CORRELATION CROISEE SUR DES BLOCS SUPERPOSES
-def decoupageSuperpose(b2,b1,bs,r,start,end):
+def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
     n,m = np.shape(b2)
     # VARIABLES
     tabx=[] # stockage décalage x
     taby=[] # stockage décalage y
     count = 0 # compte des blocs corrects
 
-    for i in range(2 * (n//bs)):
+    for i in range(f * (n//bs)):
     #i = 0 # pour les tests
-        for j in range(2 * (m//bs)):
-            if i * 2 *(m//bs) + j  >= start and i * 2 *(m//bs) + j < end: # PAS SUR
-                #print( "indice debut : " + str( int((i/2) *bs) ) + " indice fin : " + str( int(i/2)*bs + bs) )
-
-                #print(i * (m//bs) + j)
-                #print("rank : " + str(rank) + " | bloc #" + str(i * (m//bs) + j))
-
-                band2Block = np.copy(b2[ int((i/2) *bs) : int((i/2)*bs + bs) , int((j/2) *bs) : int((j/2)*bs + bs)])
-                band1Block = np.copy(b1[ int((i/2) *bs) : int((i/2)*bs + bs) , int((j/2) *bs) : int((j/2)*bs + bs)])
+        for j in range(f * (m//bs)):
+            if i * f *(m//bs) + j  >= start and i * f *(m//bs) + j < end: # PAS SUR
+                bandfBlock = np.copy(bf[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
+                band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
                 templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])
-                orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock,r)
+                orig,temp,corr,x,y = decalageBloc(bandfBlock,templateBlock,r)
                 xm = x-bs/2
                 ym = y-bs/2
                 tabx.append(xm)
                 taby.append(ym)
                 if np.sqrt(xm**2 + ym**2) < 25 :
                     count += 1
-
-                # tabx.append(i * (m//bs) + j)
-    #print("rank : " + str(rank) + " | count : " + str(count))
     return tabx,taby,count
 
 # AFFICHAGE DES RESULTATS DU DECOUPAGE
@@ -156,10 +148,10 @@ def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
     count = 0
     for i in range(n//bs) :
         for j in range(m//bs) :
-            if np.sqrt(tabx[i * (m//bs) + j]**2 + taby[i * (m//bs) + j]**2) == r :
+            if np.sqrt(tab[0][i * (m//bs) + j]**2 + tab[1][i * (m//bs) + j]**2) == r :
                 c =  'k'
                 l = 2
-            elif np.sqrt(tabx[i * (m//bs) + j]**2 + taby[i * (m//bs) + j]**2)  <= seuil:
+            elif np.sqrt(tab[0][i * (m//bs) + j]**2 + tab[1][i * (m//bs) + j]**2)  <= seuil:
                 c = 'm'
                 l = 1
                 count +=1
@@ -179,18 +171,18 @@ def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
 
 
 #AFFICHAGE DES RESULTATS DU DECOUPAGE SUPERPOSE
-def visualizeSuperpose(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
+def visualizeSuperpose(b1,b2,tabx,taby,bs,axis0,axis1,r,f,seuil):
     n,m = np.shape(b2)
     fig,ax = plt.subplots(1,2,figsize=(10,10))
     ax[0].imshow(b2)
     ax[1].imshow(b1)
     count = 0
-    for i in range(2 * (n//bs)) :
-        for j in range(2 * (m//bs)) :
-            if np.sqrt(tabx[i * 2*(m//bs) + j]**2 + taby[i * 2*(m//bs) + j]**2) == r :
+    for i in range(f * (n//bs)) :
+        for j in range(f * (m//bs)) :
+            if np.sqrt(tabx[i * f * (m // bs) + j]**2 + taby[i * f * (m // bs) + j]**2) == r :
                 c =  'k'
                 l = 2
-            elif np.sqrt(tabx[i * 2*(m//bs) + j]**2 + taby[i * 2*(m//bs) + j]**2)  <= seuil:
+            elif np.sqrt(tabx[i * f * (m // bs) + j]**2 + taby[i * f * (m//bs) + j]**2)  <= seuil:
                 c = 'm'
                 l = 1
                 count +=1
@@ -199,7 +191,7 @@ def visualizeSuperpose(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
                 l = 2
             # rect = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=l,edgecolor=c,facecolor='none')
             # rect2 = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=l,edgecolor=c,facecolor='none')
-            arrow = patches.Arrow( int((j/2) *bs + bs//2 ) , int((i/2) *bs + bs//2) ,tabx[i * 2*(m//bs) + j],taby[i * 2*(m//bs) + j], width=0.7,edgecolor=c,facecolor='none')
+            arrow = patches.Arrow( int((j/2) * bs + bs // 2 ) , int((i/2) *bs + bs//2) ,tabx[i * 2*(m//bs) + j],taby[i * 2*(m//bs) + j], width=0.7,edgecolor=c,facecolor='none')
             ax[1].add_patch(arrow)
             # ax[0].add_patch(rect)
             # ax[1].add_patch(rect2)
@@ -225,7 +217,7 @@ def countCorrect(tab,seuil,nb, verbose=False):
     return count, np.mean(distance*5)
 
 # PROGRAMME PRINCIPAL
-def main(axis0,axis1,bs,seuil):
+def main(axis0,axis1,bs,f,seuil):
     band1 = np.load("../data/band1.npy")
     band2 = np.load("../data/band2.npy")
     b1,b2 = shiftSelec(band1,band1,axis0,axis1)
@@ -242,7 +234,7 @@ def main(axis0,axis1,bs,seuil):
         nd = end - start
 
     #print("rank : " + str(rank) + " | start : " + str(start) + " | end : " + str(end))
-    tabx,taby,count = decoupageSuperpose(b2,b1,bs,r,start,end)
+    tabx,taby,count = decoupageSuperpose(b2,b1,bs,r,f,start,end)
     #print(str(count)+" BLOCS CORRECTS")
     mpi.COMM_WORLD.barrier()
 
@@ -251,19 +243,19 @@ def main(axis0,axis1,bs,seuil):
     taby = mpi.COMM_WORLD.allgather(taby)
 
     if rank == 0:
-        #tab = np.zeros((2,nb))
-        tx = np.zeros(nb)
-        ty = np.zeros(nb)
+        tab = np.zeros((2,nb))
+        # tx = np.zeros(nb)
+        # ty = np.zeros(nb)
         for k in range(size):
             for i in range(len(tabx[0])):
-                #tab[0][k * len(tabx[0]) + i] = tabx[k][i]
-                #tab[1][k * len(taby[0]) + i] = tabx[k][i]
-                tx[k * len(tabx[0]) + i] = tabx[k][i]
-                ty[k * len(taby[0]) + i] = taby[k][i]
-        #np.save("../decoup/tab_superpose.npy", tab)
-        np.save("../decoup/tx_.npy", tx)
-        np.save("../decoup/ty_.npy", ty)
-        visualizeSuperpose(b1,b2,tx,ty,bs,axis0,axis1,r,seuil)
+                tab[0][k * len(tabx[0]) + i] = tabx[k][i]
+                tab[1][k * len(taby[0]) + i] = tabx[k][i]
+                #tx[k * len(tabx[0]) + i] = tabx[k][i]
+                #ty[k * len(taby[0]) + i] = taby[k][i]
+        np.save("../decoup/tab_superpose.npy", tab)
+        # np.save("../decoup/tx_.npy", tx)
+        # np.save("../decoup/ty_.npy", ty)
+        visualizeSuperpose(b1,b2,tx,ty,bs,axis0,axis1,r,2,seuil)
 
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
 size = mpi.COMM_WORLD.Get_size() # Nombre de process"
@@ -275,8 +267,9 @@ axis0 = 15
 axis1 = 15
 seuil = 15
 bs = 256
+f = 2
 
-main(axis0,axis1,bs,seuil)
+main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
 if rank == 0:

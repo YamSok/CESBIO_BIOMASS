@@ -119,10 +119,10 @@ def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
     count = 0
     for i in range(n//bs) :
         for j in range(m//bs) :
-            if np.sqrt(tabx[i * (m//bs) + j]**2 + taby[i * (m//bs) + j]**2) == r :
+            if np.sqrt(tab[0][i * (m//bs) + j]**2 + tab[1][i * (m//bs) + j]**2) == r :
                 c =  'k'
                 l = 2
-            elif np.sqrt(tabx[i * (m//bs) + j]**2 + taby[i * (m//bs) + j]**2)  <= seuil:
+            elif np.sqrt(tab[0][i * (m//bs) + j]**2 + tab[1][i * (m//bs) + j]**2)  <= seuil:
                 c = 'm'
                 l = 1
                 count +=1
@@ -132,7 +132,8 @@ def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
 
             rect = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=l,edgecolor=c,facecolor='none')
             rect2 = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=l,edgecolor=c,facecolor='none')
-            arrow = patches.Arrow(j*bs + bs//2,i*bs + bs//2 ,tabx[i * (m//bs) + j],taby[i * (m//bs) + j], width=0.7,edgecolor='r',facecolor='none')
+            # Arrow from center of block to max of correlation
+            arrow = patches.Arrow(j*bs + bs//2,i*bs + bs//2 ,tab[0][i * (m//bs) + j],tab[1][i * (m//bs) + j], width=0.7,edgecolor='r',facecolor='none')
             ax[1].add_patch(arrow)
             ax[0].add_patch(rect)
             ax[1].add_patch(rect2)
