@@ -25,8 +25,8 @@ def afficherlol():
 def shiftSelec(im1,im2,axis0,axis1):
     band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
     b2 = selection(band2_s,115,1651,30,1054)
-    #b2 = selection(10*np.log(band2_s),115,1651,30,1054)
-    b1 = selection(im1,115,1651,30,1054)
+    b2 = selection(10*np.log(band2_s),115,1651,30,1054)
+    #b1 = selection(im1,115,1651,30,1054)
     return b1,b2
 
 def selection(img,x0,x1,y0,y1):
@@ -200,7 +200,7 @@ def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
             # ax[0].add_patch(rect)
             # ax[1].add_patch(rect2)
     plt.tight_layout()
-    plt.savefig("verif.png")
+    plt.savefig("verif2")
     #plt.savefig("../results/sup_"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     # plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)))
@@ -258,29 +258,28 @@ def main(axis0,axis1,bs,f,seuil):
                 tab[1][k * len(taby[0]) + i] = tabx[k][i]
                 #tx[k * len(tabx[0]) + i] = tabx[k][i]
                 #ty[k * len(taby[0]) + i] = taby[k][i]
-        np.save("../decoup/tab_superpose.npy", tab)
+        np.save("../decoup/tab_superpose2.npy", tab)
         #tab = np.load("../decoup/tab.npy")
-        #visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
-
+        visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
 size = mpi.COMM_WORLD.Get_size() # Nombre de process"
 #print("rank : " + str(rank) + " | size : " + str(size))
 if rank == 0:
     t0 = time.time()
 
-    axis0 = 15
-    axis1 = 15
-    seuil = 15
-    bs = 256
-    f = 2
-    r = 25
-    band1 = np.load("../data/band1.npy")
-    band2 = np.load("../data/band2.npy")
-    b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-    tab = np.load("../decoup/tab_superpose.npy")
+axis0 = 15
+axis1 = 15
+seuil = 15
+bs = 256
+f = 2
+r = 25
+# band1 = np.load("../data/band1.npy")
+# band2 = np.load("../data/band2.npy")
+# b1,b2 = shiftSelec(band1,band2,axis0,axis1)
+# tab = np.load("../decoup/tab_superpose.npy")
     #print(np.shape(tab))
-    visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
-#main(axis0,axis1,bs,f,seuil)
+    # visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
+main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
 if rank == 0:
