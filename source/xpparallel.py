@@ -179,11 +179,11 @@ def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
     count = 0
     print(f * (n//bs) - 1)
     print(f * (m//bs) - 1)
-    for i in range(f * (n//bs) - 1) :
-        for j in range(f * (m//bs) - 1) :
+    for i in range(f * (n//bs)) :
+        for j in range(f * (m//bs)) :
             print('bloc # ' + str(i * (f * (m // bs) - 1) + j))
 
-            if np.sqrt(tab[0][i * (f * (m // bs) - 1) + j]**2 + tab[1][i * f * (m // bs) + j]**2) == r :
+            if np.sqrt(tab[0][i * (f * (m // bs) - 1) + j]**2 + tab[1][i *(f * (m // bs) - 1) + j]**2) == r :
                 c =  'k'
                 l = 2
             elif np.sqrt(tab[0][i * (f * (m // bs) - 1) + j]**2 + tab[1][i * (f * (m // bs) - 1) + j]**2)  <= seuil:
