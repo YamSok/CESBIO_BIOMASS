@@ -248,7 +248,7 @@ def main(axis0,axis1,bs,f,seuil):
     #c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM)
     tabx = mpi.COMM_WORLD.allgather(tabx)
     taby = mpi.COMM_WORLD.allgather(taby)
-
+    print(len(tabx))
     if rank == 0:
         tab = np.zeros((2,nb))
         # tx = np.zeros(nb)
