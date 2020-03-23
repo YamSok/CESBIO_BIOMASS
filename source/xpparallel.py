@@ -177,9 +177,12 @@ def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
     ax[0].imshow(b2)
     ax[1].imshow(b1)
     count = 0
+    print(f * (n//bs) - 1)
+    print(f * (m//bs) - 1)
     for i in range(f * (n//bs) - 1) :
         for j in range(f * (m//bs) - 1) :
             print('bloc # ' + str(i * f * (m // bs) + j))
+
             if np.sqrt(tab[0][i * f * (m // bs) + j]**2 + tab[1][i * f * (m // bs) + j]**2) == r :
                 c =  'k'
                 l = 2
