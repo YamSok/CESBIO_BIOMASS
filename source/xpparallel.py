@@ -133,6 +133,7 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
                 orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock,r)
                 xm = x-bs/2
                 ym = y-bs/2
+                print((xm,ym))
                 tabx.append(xm)
                 taby.append(ym)
                 if np.sqrt(xm**2 + ym**2) < 25 :
