@@ -171,7 +171,7 @@ def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
 
 
 #AFFICHAGE DES RESULTATS DU DECOUPAGE SUPERPOSE
-def visualizeSuperpose(b1,b2,tabx,taby,bs,axis0,axis1,r,f,seuil):
+def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
     n,m = np.shape(b2)
     fig,ax = plt.subplots(1,2,figsize=(10,10))
     ax[0].imshow(b2)
