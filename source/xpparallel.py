@@ -275,7 +275,7 @@ if rank == 0:
     tab = np.load("../decoup/tab.npy")
     print(np.shape(tab))
 #visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
-main(axis0,axis1,bs,f,seuil)
+#main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
 if rank == 0:
