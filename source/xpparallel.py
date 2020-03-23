@@ -255,7 +255,7 @@ def main(axis0,axis1,bs,f,seuil):
         np.save("../decoup/tab_superpose.npy", tab)
         # np.save("../decoup/tx_.npy", tx)
         # np.save("../decoup/ty_.npy", ty)
-        visualizeSuperpose(b1,b2,tx,ty,bs,axis0,axis1,r,2,seuil)
+        visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,2,seuil)
 
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
 size = mpi.COMM_WORLD.Get_size() # Nombre de process"
