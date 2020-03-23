@@ -248,13 +248,14 @@ def main(axis0,axis1,bs,f,seuil):
     #c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM)
     tabx = mpi.COMM_WORLD.allgather(tabx)
     taby = mpi.COMM_WORLD.allgather(taby)
-    print(len(tabx))
+    #print(len(tabx))
     if rank == 0:
         tab = np.zeros((2,nb))
         # tx = np.zeros(nb)
         # ty = np.zeros(nb)
         for k in range(size):
             for i in range(len(tabx[0])):
+                print(k * len(tabx[0]) + i)
                 tab[0][k * len(tabx[0]) + i] = tabx[k][i]
                 tab[1][k * len(taby[0]) + i] = taby[k][i]
                 #tx[k * len(tabx[0]) + i] = tabx[k][i]
