@@ -196,7 +196,8 @@ def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
             #ax[0].add_patch(rect)
             #ax[1].add_patch(rect2)
     plt.tight_layout()
-    plt.savefig("ouf")
+
+    plt.savefig("5pourvoir")
     #plt.savefig("../results/sup_"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     # plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)))
@@ -276,7 +277,7 @@ axis0 = 15 # décalage horizontal vers la gauche
 axis1 = 15  # décalage vertical vers le bas
 seuil = 15 # Seuil de norme pour les vecteur déplacements en px (rouge si > , magenta si <)
 bs = 256 # Bloc size
-f = 4 # Facteur de recouvrement
+f = 5 # Facteur de recouvrement
 r = 25 # norme maximale en pixel admise pour le vecteur déplacement
 
 ### Partie Visualisation ###
