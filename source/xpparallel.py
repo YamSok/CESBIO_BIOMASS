@@ -15,11 +15,6 @@ mpl.rcParams['figure.dpi'] = 300
 import warnings
 warnings.filterwarnings("ignore")
 
-from datetime import datetime as dt
-
-def afficherlol():
-    a = np.array([1,2])
-    print("lol")
 
 # SELECTION DE DIMENSIONS EN PUISSANCE DE 2 | SHIFT
 def shiftSelec(im1,im2,axis0,axis1):
@@ -81,7 +76,6 @@ def decalageBloc(original, template, r):
     nc = n // 2
     mc = m // 2
     y, x = np.unravel_index(np.argmax(corr[nc - r:nc + r, mc - r:mc + r]), corr[nc - r:nc + r, mc - r:mc + r].shape)  # find the match
-    #print("Shape: " + str(np.shape(corr[nc - r:nc + r, mc - r:mc + r])))
     y = y + mc - r
     x = x + nc - r
 
@@ -197,7 +191,7 @@ def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
             #ax[1].add_patch(rect2)
     plt.tight_layout()
 
-    plt.savefig("5pourvoir")
+    plt.savefig("2")
     #plt.savefig("../results/sup_"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     # plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)))
@@ -277,7 +271,7 @@ axis0 = 15 # décalage horizontal vers la gauche
 axis1 = 15  # décalage vertical vers le bas
 seuil = 15 # Seuil de norme pour les vecteur déplacements en px (rouge si > , magenta si <)
 bs = 256 # Bloc size
-f = 5 # Facteur de recouvrement
+f = 2 # Facteur de recouvrement
 r = 25 # norme maximale en pixel admise pour le vecteur déplacement
 
 ### Partie Visualisation ###
