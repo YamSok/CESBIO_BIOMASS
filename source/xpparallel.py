@@ -123,17 +123,15 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
     taby=[] # stockage décalage y
     count = 0 # compte des blocs corrects
 
-    for i in range(f * (n//bs) - (f-1)):
-    #i = 0 # pour les tests
+    for i in range(f * (n//bs) - (f-1)): # Parcours des blocs superposés (incertain)
         for j in range(f * (m//bs)- (f-1)):
-            if i * (f * (m // bs) - 1) + j  >= start and i * (f * (m // bs) - 1) + j < end:
-                band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
+            if i * (f * (m // bs) - 1) + j  >= start and i * (f * (m // bs) - 1) + j < end: # Vérification que le processus doit bien traiter ce bloc
+                band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])  # Selection des blocs sur band 1 et 2
                 band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
-                templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])
-                orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock,r)
+                templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])  # Selection du sous bloc
+                orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock,r) # Calcul du déplacement
                 xm = x-bs/2
                 ym = y-bs/2
-                print((xm,ym))
                 tabx.append(xm)
                 taby.append(ym)
                 if np.sqrt(xm**2 + ym**2) < 25 :
@@ -150,16 +148,15 @@ def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
     for i in range(n//bs) :
         for j in range(m//bs) :
             if np.sqrt(tab[0][i * (m//bs) + j]**2 + tab[1][i * (m//bs) + j]**2) == r :
-                c =  'k'
-                l = 2
-            elif np.sqrt(tab[0][i * (m//bs) + j]**2 + tab[1][i * (m//bs) + j]**2)  <= seuil:
-                c = 'm'
+                c =  'k' # couleur noire
+                l = 2 # épaisseur du trait du vecteur
+            elif np.sqrt(tab[0][i * (m//bs) + j]**2 + tab[1][i * (m//bs) + j]**2)  <= seuil: # calcul de la
+                c = 'm' # magenta
                 l = 1
                 count +=1
             else:
                 c = 'r'
                 l = 2
-
             rect = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=l,edgecolor=c,facecolor='none')
             rect2 = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=l,edgecolor=c,facecolor='none')
             arrow = patches.Arrow(j*bs + bs//2,i*bs + bs//2 ,tabx[i * (m//bs) + j],taby[i * (m//bs) + j], width=0.7,edgecolor='r',facecolor='none')
@@ -182,7 +179,6 @@ def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
     print(f * (m//bs) - 1)
     for i in range(f * (n//bs) - (f-1)) :
         for j in range(f * (m//bs) - (f-1)) :
-            print('bloc # ' + str(i * (f * (m // bs) - 1) + j))
 
             if np.sqrt(tab[0][i * (f * (m // bs) - 1) + j]**2 + tab[1][i *(f * (m // bs) - 1) + j]**2) == r :
                 c =  'k'
@@ -258,7 +254,7 @@ def main(axis0,axis1,bs,f,seuil):
     taby = mpi.COMM_WORLD.allgather(taby)
 
     # Correction du format renvoyé par la fonction allgather
-    # Passage de matrice à vecteur
+    # Passage de 2 matrice à  1 matrice ()
     # Utile pour
     if rank == 0:
         tab = np.zeros((2,nb))
