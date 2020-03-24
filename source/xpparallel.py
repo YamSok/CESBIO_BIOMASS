@@ -180,8 +180,8 @@ def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
     count = 0
     print(f * (n//bs) - 1)
     print(f * (m//bs) - 1)
-    for i in range(f * (n//bs) - 1) :
-        for j in range(f * (m//bs) - 1) :
+    for i in range(f * (n//bs) - (f-1)) :
+        for j in range(f * (m//bs) - (f-1)) :
             print('bloc # ' + str(i * (f * (m // bs) - 1) + j))
 
             if np.sqrt(tab[0][i * (f * (m // bs) - 1) + j]**2 + tab[1][i *(f * (m // bs) - 1) + j]**2) == r :
@@ -228,14 +228,15 @@ def main(axis0,axis1,bs,f,seuil):
     band1 = np.load("../data/band1.npy")
     band2 = np.load("../data/band2.npy")
     b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-    # Block size
     r = 25
-    # Distribution des blocs sur les processes
+
+    ### Distribution des blocs sur les processes
     n,m = np.shape(b2)
     if f == 1:
         nb = (n // bs) * (m // bs)
     else :
         nb = (f*(n // bs) - 1) * (f*(m // bs) - 1) # Nombre de blocs dans l'image
+
     nd = nb // size # Nombre de blocs à traiter par process
     start =  rank * nd + rank * ((rank - 1) < (nb % size)) + (rank)*((rank - 1) >= (nb % size))
     end = (rank + 1) * nd + (rank + 1) * ((rank - 1) < (nb % size)) + (rank)*((rank - 1) >= (nb % size))
@@ -245,48 +246,52 @@ def main(axis0,axis1,bs,f,seuil):
 
     # print("Nombre de blocs à traiter : " + str(nb))
     # print("rank : " + str(rank) + " | start : " + str(start) + " | end : " + str(end))
+
     tabx,taby,count = decoupageSuperpose(b2,b1,bs,r,f,start,end)
-    #print(str(count)+" BLOCS CORRECTS")
-    mpi.COMM_WORLD.barrier()
+
+    mpi.COMM_WORLD.barrier()  # Attente de tous les processus
 
     #c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM)
+
+    # Regroupement des données calculés par chaque processus
     tabx = mpi.COMM_WORLD.allgather(tabx)
     taby = mpi.COMM_WORLD.allgather(taby)
-    #print(len(tabx))
-    # print(tabx[15])
-    # print("nb : " + str(nb))
+
+    # Correction du format renvoyé par la fonction allgather
+    # Passage de matrice à vecteur
+    # Utile pour
     if rank == 0:
         tab = np.zeros((2,nb))
-        # tx = np.zeros(nb)
-        # ty = np.zeros(nb)
         for k in range(size):
             for i in range(len(tabx[k])):
-
                 tab[0][k * len(tabx[0]) + i] = tabx[k][i]
                 tab[1][k * len(taby[0]) + i] = taby[k][i]
-                #tx[k * len(tabx[0]) + i] = tabx[k][i]
-                #ty[k * len(taby[0]) + i] = taby[k][i]
-        # print(tab)
-        np.save("../decoup/"+str(f)+ ".npy", tab)
-        # tab = np.load("../decoup/tab_superpose2.npy")
-        visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
+
+        np.save("../decoup/"+str(f)+ ".npy", tab)  # Enregistrement des résultats pour visualisation
+        # tab = np.load("../decoup/tab_superpose2.npy")  # Chargement des résultats pour visualisation
+        visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil) # Ligne à décommenter si visualisation directe des résultats
+
+
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
 size = mpi.COMM_WORLD.Get_size() # Nombre de process"
+
 if rank == 0:
     t0 = time.time()
 
-axis0 = 15
-axis1 = 15
-seuil = 15
-bs = 256
-f = 3
-r = 25
+axis0 = 15 # décalage horizontal vers la gauche
+axis1 = 15  # décalage vertical vers le bas
+seuil = 15 # Seuil de norme pour les vecteur déplacements en px (rouge si > , magenta si <)
+bs = 256 # Bloc size
+f = 3 # Facteur de recouvrement
+r = 25 # norme maximale en pixel admise pour le vecteur déplacement
+
+### Partie Visualisation ###
+
 # band1 = np.load("../data/band1.npy")
 # band2 = np.load("../data/band2.npy")
 # b1,b2 = shiftSelec(band1,band2,axis0,axis1)
 # tab = np.load("../decoup/tab_superpose.npy")
-    #print(np.shape(tab))
-    # visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
+# visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
 main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
