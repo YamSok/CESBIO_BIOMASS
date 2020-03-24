@@ -267,20 +267,20 @@ size = mpi.COMM_WORLD.Get_size() # Nombre de process"
 if rank == 0:
     t0 = time.time()
 
-axis0 = 15 # décalage horizontal vers la gauche
-axis1 = 15  # décalage vertical vers le bas
-seuil = 15 # Seuil de norme pour les vecteur déplacements en px (rouge si > , magenta si <)
-bs = 256 # Bloc size
-f = 2 # Facteur de recouvrement
-r = 25 # norme maximale en pixel admise pour le vecteur déplacement
+    axis0 = 15 # décalage horizontal vers la gauche
+    axis1 = 15  # décalage vertical vers le bas
+    seuil = 15 # Seuil de norme pour les vecteur déplacements en px (rouge si > , magenta si <)
+    bs = 256 # Bloc size
+    f = 2 # Facteur de recouvrement
+    r = 25 # norme maximale en pixel admise pour le vecteur déplacement
 
-### Partie Visualisation ###
+    ### Partie Visualisation ###
 
-band1 = np.load("../data/band1.npy")
-band2 = np.load("../data/band2.npy")
-b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-tab = np.load("../decoup/a2.npy")
-visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
+    band1 = np.load("../data/band1.npy")
+    band2 = np.load("../data/band2.npy")
+    b1,b2 = shiftSelec(band1,band2,axis0,axis1)
+    tab = np.load("../decoup/a2.npy")
+    visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
 # main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
