@@ -193,7 +193,7 @@ def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
             #rect = patches.Rectangle( (int(j/f) * bs, int((i/f) * bs)) ,bs//2,bs//2,linewidth=l,edgecolor='k',facecolor='none')
             #rect2 = patches.Rectangle( (int(j/f) * bs, int((i/f) * bs)) ,bs//2,bs//2,linewidth=l,edgecolor='k',facecolor='none')
 
-            arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m // bs) - 1) + j],tab[1][i * (f * (m // bs) - 1) + j], width=0.7,edgecolor=c,facecolor='none')
+            arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.7,edgecolor=c,facecolor='none')
             ax[1].add_patch(arrow)
             #ax[0].add_patch(rect)
             #ax[1].add_patch(rect2)
@@ -264,7 +264,7 @@ def main(axis0,axis1,bs,f,seuil):
                 tab[1][k * len(taby[0]) + i] = taby[k][i]
 
         np.save("../decoup/"+str(f)+ ".npy", tab)  # Enregistrement des résultats pour visualisation
-        # tab = np.load("../decoup/tab_superpose2.npy")  # Chargement des résultats pour visualisation
+        #tab = np.load("../decoup/tab_superpose2.npy")  # Chargement des résultats pour visualisation
         visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil) # Ligne à décommenter si visualisation directe des résultats
 
 
@@ -283,12 +283,12 @@ r = 25 # norme maximale en pixel admise pour le vecteur déplacement
 
 ### Partie Visualisation ###
 
-# band1 = np.load("../data/band1.npy")
-# band2 = np.load("../data/band2.npy")
-# b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-# tab = np.load("../decoup/tab_superpose.npy")
-# visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
-main(axis0,axis1,bs,f,seuil)
+band1 = np.load("../data/band1.npy")
+band2 = np.load("../data/band2.npy")
+b1,b2 = shiftSelec(band1,band2,axis0,axis1)
+tab = np.load("../decoup/4tab.npy")
+visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
+#main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
 if rank == 0:
