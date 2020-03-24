@@ -125,7 +125,7 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
 
     for i in range(f * (n//bs) - (f-1)): # Parcours des blocs superposés (incertain)
         for j in range(f * (m//bs)- (f-1)):
-            if i * (f * (m // bs) - 1) + j  >= start and i * (f * (m // bs) - 1) + j < end: # Vérification que le processus doit bien traiter ce bloc
+            if i * (f * (m // bs) - (f-1)) + j  >= start and i * (f * (m // bs) - (f-1)) + j < end: # Vérification que le processus doit bien traiter ce bloc
                 band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])  # Selection des blocs sur band 1 et 2
                 band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
                 templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])  # Selection du sous bloc
@@ -175,8 +175,6 @@ def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
     ax[0].imshow(b2)
     ax[1].imshow(b1)
     count = 0
-    print(f * (n//bs) - 1)
-    print(f * (m//bs) - 1)
     for i in range(f * (n//bs) - (f-1)) :
         for j in range(f * (m//bs) - (f-1)) :
 
