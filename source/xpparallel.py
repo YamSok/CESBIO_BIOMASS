@@ -191,7 +191,7 @@ def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
             #ax[1].add_patch(rect2)
     plt.tight_layout()
 
-    plt.savefig("2")
+    plt.savefig("b2")
     #plt.savefig("../results/sup_"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     # plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)))
@@ -275,13 +275,13 @@ f = 2 # Facteur de recouvrement
 r = 25 # norme maximale en pixel admise pour le vecteur déplacement
 
 ### Partie Visualisation ###
-#
-# band1 = np.load("../data/band1.npy")
-# band2 = np.load("../data/band2.npy")
-# b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-# tab = np.load("../decoup/4.npy")
-# visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
-main(axis0,axis1,bs,f,seuil)
+
+band1 = np.load("../data/band1.npy")
+band2 = np.load("../data/band2.npy")
+b1,b2 = shiftSelec(band1,band2,axis0,axis1)
+tab = np.load("../decoup/2.npy")
+visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
+# main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
 if rank == 0:
