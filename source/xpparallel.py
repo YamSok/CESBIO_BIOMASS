@@ -123,9 +123,9 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
     taby=[] # stockage décalage y
     count = 0 # compte des blocs corrects
 
-    for i in range(f * (n//bs) - 1):
+    for i in range(f * (n//bs) - (f-1)):
     #i = 0 # pour les tests
-        for j in range(f * (m//bs)-1):
+        for j in range(f * (m//bs)- (f-1)):
             if i * (f * (m // bs) - 1) + j  >= start and i * (f * (m // bs) - 1) + j < end:
                 band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
                 band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
