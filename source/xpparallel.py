@@ -187,8 +187,8 @@ def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
 
             arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.7,edgecolor=c,facecolor='none')
             ax[1].add_patch(arrow)
-            #ax[0].add_patch(rect)
-            #ax[1].add_patch(rect2)
+            ax[0].add_patch(rect)
+            ax[1].add_patch(rect2)
     plt.tight_layout()
 
     plt.savefig("b2")
