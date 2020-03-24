@@ -279,7 +279,7 @@ r = 25 # norme maximale en pixel admise pour le vecteur déplacement
 band1 = np.load("../data/band1.npy")
 band2 = np.load("../data/band2.npy")
 b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-tab = np.load("../decoup/2.npy")
+tab = np.load("../decoup/a2.npy")
 visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
 # main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
