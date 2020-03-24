@@ -174,16 +174,16 @@ def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
 
             if np.sqrt(tab[0][i * (f * (m//bs) - (f-1)) + j]**2 + tab[1][i *(f * (m//bs) - (f-1)) + j]**2) == r :
                 c =  'k'
-                l = 2
+                l = 1
             elif np.sqrt(tab[0][i * (f * (m//bs) - (f-1)) + j]**2 + tab[1][i * (f * (m//bs) - (f-1)) + j]**2)  <= seuil:
                 c = 'm'
                 l = 1
                 count +=1
             else:
                 c = 'r'
-                l = 2
-            #rect = patches.Rectangle( (int(j/f) * bs, int((i/f) * bs)) ,bs//2,bs//2,linewidth=l,edgecolor='k',facecolor='none')
-            #rect2 = patches.Rectangle( (int(j/f) * bs, int((i/f) * bs)) ,bs//2,bs//2,linewidth=l,edgecolor='k',facecolor='none')
+                l = 1
+            rect = patches.Rectangle( (int(j/f) * bs, int((i/f) * bs)) ,bs,bs,linewidth=l,edgecolor='k',facecolor='none')
+            rect2 = patches.Rectangle( (int(j/f) * bs, int((i/f) * bs)) ,bs,bs,linewidth=l,edgecolor='k',facecolor='none')
 
             arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.7,edgecolor=c,facecolor='none')
             ax[1].add_patch(arrow)
