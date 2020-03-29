@@ -252,7 +252,7 @@ def main(axis0,axis1,bs,f,seuil):
     # Passage de 2 matrice à  1 matrice ()
     # Utile pour
     if rank == 0:
-        accu = int(count / nb * 100)
+        accu = int(c / nb * 100)
         print(str(c)+" blocs corrects/ "+str(nb) + " | " + str(accu) + "% de précision")
         tab = np.zeros((2,nb))
         for k in range(size):
