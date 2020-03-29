@@ -132,7 +132,6 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
                 taby.append(ym)
                 if np.sqrt(xm**2 + ym**2) < 25 :
                     count += 1
-    print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)) + " | " + str(accu) + "% de précision")
     return tabx,taby,count
 
 # AFFICHAGE DES RESULTATS DU DECOUPAGE
