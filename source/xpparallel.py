@@ -30,8 +30,9 @@ def selection(img,x0,x1,y0,y1):
     return img[x0:x0+h,y0:y0+w]
 
 # AFFICHAGE DE 4 SUBPLOTS | ( original, tamplate, cross correlation, zoom de cross correlation )
-def displayImg(original,template,corr,x,y,r):
+def displayImg(original,template,corr,x,y):
     n,m = np.shape(original)
+    r = 25
     fig, (ax_orig, ax_template, ax_corr, ax_corr2) = plt.subplots(1, 4,figsize=(10, 20))
     ax_orig.imshow(original)
     ax_orig.set_title('Original')
@@ -123,13 +124,14 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
                 band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])  # Selection des blocs sur band 1 et 2
                 band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
                 templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])  # Selection du sous bloc
-                orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock,r) # Calcul du déplacement
+                orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock) # Calcul du déplacement
                 xm = x-bs/2
                 ym = y-bs/2
                 tabx.append(xm)
                 taby.append(ym)
                 if np.sqrt(xm**2 + ym**2) < 25 :
                     count += 1
+    print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)) + " | " + str(accu) + "% de précision")
     return tabx,taby,count
 
 # AFFICHAGE DES RESULTATS DU DECOUPAGE
@@ -163,8 +165,10 @@ def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
 
 
 #AFFICHAGE DES RESULTATS DU DECOUPAGE SUPERPOSE
-def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
+def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,f,seuil):
+    r = 25
     n,m = np.shape(b2)
+    nb = (f*(n // bs) - (f-1)) * (f*(m // bs) - (f-1)) # nombr de blocs dans l'image
     fig,ax = plt.subplots(1,2,figsize=(10,10))
     ax[0].imshow(b2)
     ax[1].imshow(b1)
@@ -189,12 +193,11 @@ def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil):
             ax[1].add_patch(arrow)
             ax[0].add_patch(rect)
             ax[1].add_patch(rect2)
-    plt.tight_layout()
 
-    plt.savefig("b2")
-    #plt.savefig("../results/sup_"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
-    # plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
-    print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)))
+    plt.tight_layout()
+    accu = (count / nb * 100)
+    plt.savefig("../results/"+ str(f) + "f_" + str(bs) + "bs_" + str(axis0) + "ax1_" + str(axis1) + "ax1_" + str(seuil) + "seuil_" + str(accu) + "accu..png")
+    # print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)) + " | " + str(accu) + "% de précision")
 
 # DONNE LE NOMBRE DE BLOCS AVEC DECALGE < SEUIL
 def countCorrect(tab,seuil,nb, verbose=False):
@@ -218,7 +221,6 @@ def main(axis0,axis1,bs,f,seuil):
     band2 = np.load("../data/band2.npy")
     b1,b2 = shiftSelec(band1,band2,axis0,axis1)
     r = 25
-
     ### Distribution des blocs sur les processes
     n,m = np.shape(b2)
     if f == 1:
@@ -240,7 +242,7 @@ def main(axis0,axis1,bs,f,seuil):
 
     mpi.COMM_WORLD.barrier()  # Attente de tous les processus
 
-    #c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM)
+    c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM)
 
     # Regroupement des données calculés par chaque processus
     tabx = mpi.COMM_WORLD.allgather(tabx)
@@ -250,15 +252,17 @@ def main(axis0,axis1,bs,f,seuil):
     # Passage de 2 matrice à  1 matrice ()
     # Utile pour
     if rank == 0:
+        accu = int(count / nb * 100)
+        print(str(c)+" blocs corrects/ "+str(nb) + " | " + str(accu) + "% de précision")
         tab = np.zeros((2,nb))
         for k in range(size):
             for i in range(len(tabx[k])):
                 tab[0][k * len(tabx[0]) + i] = tabx[k][i]
                 tab[1][k * len(taby[0]) + i] = taby[k][i]
 
-        np.save("../decoup/a"+str(f)+ ".npy", tab)  # Enregistrement des résultats pour visualisation
+        np.save("../decoup/" + str(f) + "f_" + str(bs) + "bs" + "_"+str(axis0) + "ax1_" + str(axis1) + "ax1_" + str(seuil) + "seuil_" + str(accu) + "accu.npy", tab)  # Enregistrement des résultats pour visualisation
         #tab = np.load("../decoup/tab_superpose2.npy")  # Chargement des résultats pour visualisation
-        visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil) # Ligne à décommenter si visualisation directe des résultats
+        #visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil) # Ligne à décommenter si visualisation directe des résultats
 
 
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
@@ -267,21 +271,21 @@ size = mpi.COMM_WORLD.Get_size() # Nombre de process"
 if rank == 0:
     t0 = time.time()
 
-    axis0 = 15 # décalage horizontal vers la gauche
-    axis1 = 15  # décalage vertical vers le bas
-    seuil = 15 # Seuil de norme pour les vecteur déplacements en px (rouge si > , magenta si <)
-    bs = 256 # Bloc size
-    f = 2 # Facteur de recouvrement
-    r = 25 # norme maximale en pixel admise pour le vecteur déplacement
-
-    ### Partie Visualisation ###
-
-    band1 = np.load("../data/band1.npy")
-    band2 = np.load("../data/band2.npy")
-    b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-    tab = np.load("../decoup/a2.npy")
-    visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
-# main(axis0,axis1,bs,f,seuil)
+axis0 = 15 # décalage horizontal vers la gauche
+axis1 = 15  # décalage vertical vers le bas
+seuil = 15 # Seuil de norme pour les vecteur déplacements en px (rouge si > , magenta si <)
+bs = 256 # Bloc size
+f = 2 # Facteur de recouvrement
+r = 25 # norme maximale en pixel admise pour le vecteur déplacement
+    #
+    # ### Partie Visualisation ###
+    #
+    # band1 = np.load("../data/band1.npy")
+    # band2 = np.load("../data/band2.npy")
+    # b1,b2 = shiftSelec(band1,band2,axis0,axis1)
+    # tab = np.load("../decoup/a2.npy")
+    # visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
+main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
 if rank == 0:
