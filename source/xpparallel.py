@@ -63,7 +63,8 @@ def displayImg(original,template,corr,x,y):
     print("(x,y) = ("+str(x)+','+str(y)+')' )
 
 # CALCUL DE LA CORRELATION CROISEE ENTRE original ET template
-def decalageBloc(original, template, r):
+def decalageBloc(original, template):
+    r = 25
     orig = np.copy(original)  #prévenir pbs de pointeurs python
     temp = np.copy(template)
 
@@ -276,7 +277,7 @@ axis1 = 15  # décalage vertical vers le bas
 seuil = 15 # Seuil de norme pour les vecteur déplacements en px (rouge si > , magenta si <)
 bs = 256 # Bloc size
 f = 2 # Facteur de recouvrement
-r = 25 # norme maximale en pixel admise pour le vecteur déplacement
+#r = 25 # norme maximale en pixel admise pour le vecteur déplacement
     #
     # ### Partie Visualisation ###
     #
