@@ -19,6 +19,7 @@ def shiftSelec(im1,im2,axis0,axis1):
     b1 = selection(im1,115,1651,30,1054)
     return b1,b2
 
+
 def selection(img,x0,x1,y0,y1):
     h = abs(x0 - x1)
     w = abs(y0 - y1)
@@ -228,11 +229,11 @@ def countCorrect(tab,seuil,nb, verbose=False):
 
 ## Fonctions notebook
 #
-def decoupage(band2,band1,bs,r,axis0=0,axis1=0,v=False): #bs= blocksize
+def decoupage(band2,band1,bs,i,j,axis0=0,axis1=0,v=False): #bs= blocksize
 
     # DECALAGE "GROSSIER" de BAND 2 par rapport à BAND 1
     b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-
+    r = 25
     n,m = np.shape(b2)
 
     fig,ax = plt.subplots(1,2,figsize=(10,10))
@@ -240,24 +241,26 @@ def decoupage(band2,band1,bs,r,axis0=0,axis1=0,v=False): #bs= blocksize
     ax[1].imshow(b1)
 
     # VARIABLES
-    tabx=[] # stockage décalage x
-    taby=[] # stockage décalage y
+    # tabx=[] # stockage décalage x
+    # taby=[] # stockage décalage y
+    nb = (n // bs) * (m // bs)
+    tab = np.zeros((2,nb))
     count = 0 # compte des blocs corrects
 
     #for i in range(n//bs):
     #for i in range(3): # pour les tests
-    i = 2
-    j = 3
+    # i = 2
+    # j = 3
     #for j in range(m//bs):
     band2Block = np.copy(b2[i*bs:(i+1)*bs,j*bs:(j+1)*bs])
     band1Block = np.copy(b1[i*bs:(i+1)*bs,j*bs:(j+1)*bs])
     #print("bloc " + str(i*(m//bs) + j) + " | Var : " + "%.2f" % np.std(band1Block))
     templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])
-    orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock,r)
+    orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock)
     xm = x-bs//2
     ym = y-bs//2
-    tabx.append(xm)
-    taby.append(ym)
+    tab[0][i * (m//bs) + j] = xm
+    tab[1][i * (m//bs) + j] = ym
     if np.sqrt(xm**2 + ym**2) == r :
         rect = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=2,edgecolor='r',facecolor='none')
         rect2 = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=2,edgecolor='r',facecolor='none')
@@ -273,15 +276,15 @@ def decoupage(band2,band1,bs,r,axis0=0,axis1=0,v=False): #bs= blocksize
 
     if v:
         print('itération : '+str(j))
-        displayImg(orig,temp,corr,x,y,r)
+        displayImg(orig,temp,corr,x,y)
 
     # SAUVEGARDE + NOM | AFFICHAGE
     #plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0" + "_"+str(axis1)+"ax1"+".png")
     plt.show()
 
     # AFFICHAGE BLOC CORRECTS : err < 25 pixels
-    print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)))
-    return orig,temp,corr,x,y,r
+    # print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)))
+    return orig,temp,corr,x,y,tab
     #return tabx,taby
 
 def compareImg(original,shift,template,bloc):
