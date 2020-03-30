@@ -15,7 +15,10 @@ from matplotlib.ticker import MultipleLocator
 from matplotlib.pyplot import figure
 import matplotlib.patches as patches
 import matplotlib as mpl
-        
+mpl.rcParams['figure.dpi'] = 300
+import warnings
+warnings.filterwarnings("ignore")
+
 def choice():
     os.chdir('../decoup')
     rez = os.popen('ls -t').read()
@@ -24,14 +27,14 @@ def choice():
     print("Liste des résulats (du plus récent au moins récent)")
     for i in range(len(a)):
         print(rez2[i])
-    
+
     cin = input("Entre le numéro résulat à visuliser : ")
-    
+
     return a[int(cin)]
 
 def ExtractFeatures(filename):
     #test = "256bs_15sx_15sy_25r_15seuil_0count.png"
-    liste = filename.split('_')   
+    liste = filename.split('_')
     features = ['f', 'bs', 'ax0', 'ax1', 'seuil', 'count']
     objectFeatures = {}
     for i in range(len(features)):
@@ -59,7 +62,7 @@ def visualizeSuperpose(ff,tab): # file features
     ax[0].imshow(b2)
     ax[1].imshow(b1)
     count = 0
-    
+
     for i in range(f * (n//bs) - (f-1)) :
         for j in range(f * (m//bs) - (f-1)) :
 
@@ -85,7 +88,7 @@ def visualizeSuperpose(ff,tab): # file features
     #plt.savefig("b2")
     accu = (count / nb * 100)
     plt.savefig("../results/"+ str(f) + "f_" + str(bs) + "bs_" + str(ax0) + "sx_" + str(ax0) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu..png")
-    
+
     #plt.savefig("../results/sup_"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
     # plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
 
@@ -108,4 +111,3 @@ print(c)
 tab = np.load('../decoup/' + c)
 visualizeSuperpose(ff,tab)
 #npy = choice()
-
