@@ -169,58 +169,184 @@ def countCorrect(tab,seuil,nb, verbose=False):
 ## Vieilles fonctions, pour le rapport peut êtrye
 
 # APPLICATION CORRELATION A UNE IMAGE DECOUPEE EN BLOCS
-def decoupage(b2,b1,bs,r,start,end):
+# def decoupage(b2,b1,bs,r,start,end):
+#     n,m = np.shape(b2)
+#     # VARIABLES
+#     tabx=[] # stockage décalage x
+#     taby=[] # stockage décalage y
+#     count = 0 # compte des blocs corrects
+#
+#     for i in range(n//bs):
+#     #i = 0 # pour les tests
+#         for j in range(m//bs):
+#             if i * (m//bs) + j  >= start and i * (m//bs) + j < end:
+#                 #print(i * (m//bs) + j)
+#                 #print("rank : " + str(rank) + " | bloc #" + str(i * (m//bs) + j))
+#                 band2Block = np.copy(b2[i*bs:(i+1)*bs,j*bs:(j+1)*bs])
+#                 band1Block = np.copy(b1[i*bs:(i+1)*bs,j*bs:(j+1)*bs])
+#                 templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])
+#                 orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock,r)
+#                 xm = x-bs/2
+#                 ym = y-bs/2
+#                 tabx.append(xm)
+#                 taby.append(ym)
+#                 if np.sqrt(xm**2 + ym**2) < 25 :
+#                     count += 1
+#                 # tabx.append(i * (m//bs) + j)
+#     #print("rank : " + str(rank) + " | count : " + str(count))
+#     return tabx,taby,count
+#
+# # AFFICHAGE DES RESULTATS DU DECOUPAGE
+# def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
+#     n,m = np.shape(b2)
+#     fig,ax = plt.subplots(1,2,figsize=(10,10))
+#     ax[0].imshow(b2)
+#     ax[1].imshow(b1)
+#     count = 0
+#     for i in range(n//bs) :
+#         for j in range(m//bs) :
+#             if np.sqrt(tab[0][i * (m//bs) + j]**2 + tab[1][i * (m//bs) + j]**2) == r :
+#                 c =  'k' # couleur noire
+#                 l = 2 # épaisseur du trait du vecteur
+#             elif np.sqrt(tab[0][i * (m//bs) + j]**2 + tab[1][i * (m//bs) + j]**2)  <= seuil: # calcul de la
+#                 c = 'm' # magenta
+#                 l = 1
+#                 count +=1
+#             else:
+#                 c = 'r'
+#                 l = 2
+#             rect = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=l,edgecolor=c,facecolor='none')
+#             rect2 = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=l,edgecolor=c,facecolor='none')
+#             arrow = patches.Arrow(j*bs + bs//2,i*bs + bs//2 ,tabx[i * (m//bs) + j],taby[i * (m//bs) + j], width=0.7,edgecolor='r',facecolor='none')
+#             ax[1].add_patch(arrow)
+#             ax[0].add_patch(rect)
+#             ax[1].add_patch(rect2)
+#     plt.tight_layout()
+#     plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
+#     print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)))
+
+
+## Fonctions notebook
+#
+def decoupage(band2,band1,bs,r,axis0=0,axis1=0,v=False): #bs= blocksize
+
+    # DECALAGE "GROSSIER" de BAND 2 par rapport à BAND 1
+    b1,b2 = shiftSelec(band1,band2,axis0,axis1)
+
     n,m = np.shape(b2)
+
+    fig,ax = plt.subplots(1,2,figsize=(10,10))
+    ax[0].imshow(b2)
+    ax[1].imshow(b1)
+
     # VARIABLES
     tabx=[] # stockage décalage x
     taby=[] # stockage décalage y
     count = 0 # compte des blocs corrects
 
-    for i in range(n//bs):
-    #i = 0 # pour les tests
-        for j in range(m//bs):
-            if i * (m//bs) + j  >= start and i * (m//bs) + j < end:
-                #print(i * (m//bs) + j)
-                #print("rank : " + str(rank) + " | bloc #" + str(i * (m//bs) + j))
-                band2Block = np.copy(b2[i*bs:(i+1)*bs,j*bs:(j+1)*bs])
-                band1Block = np.copy(b1[i*bs:(i+1)*bs,j*bs:(j+1)*bs])
-                templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])
-                orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock,r)
-                xm = x-bs/2
-                ym = y-bs/2
-                tabx.append(xm)
-                taby.append(ym)
-                if np.sqrt(xm**2 + ym**2) < 25 :
-                    count += 1
-                # tabx.append(i * (m//bs) + j)
-    #print("rank : " + str(rank) + " | count : " + str(count))
-    return tabx,taby,count
+    #for i in range(n//bs):
+    #for i in range(3): # pour les tests
+    i = 2
+    j = 3
+    #for j in range(m//bs):
+    band2Block = np.copy(b2[i*bs:(i+1)*bs,j*bs:(j+1)*bs])
+    band1Block = np.copy(b1[i*bs:(i+1)*bs,j*bs:(j+1)*bs])
+    #print("bloc " + str(i*(m//bs) + j) + " | Var : " + "%.2f" % np.std(band1Block))
+    templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])
+    orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock,r)
+    xm = x-bs//2
+    ym = y-bs//2
+    tabx.append(xm)
+    taby.append(ym)
+    if np.sqrt(xm**2 + ym**2) == r :
+        rect = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=2,edgecolor='r',facecolor='none')
+        rect2 = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=2,edgecolor='r',facecolor='none')
+    else :
+        count += 1
+        rect = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=1,edgecolor='m',facecolor='none')
+        rect2 = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=1,edgecolor='m',facecolor='none')
 
-# AFFICHAGE DES RESULTATS DU DECOUPAGE
-def visualize(b1,b2,tabx,taby,bs,axis0,axis1,r,seuil):
-    n,m = np.shape(b2)
-    fig,ax = plt.subplots(1,2,figsize=(10,10))
-    ax[0].imshow(b2)
-    ax[1].imshow(b1)
-    count = 0
-    for i in range(n//bs) :
-        for j in range(m//bs) :
-            if np.sqrt(tab[0][i * (m//bs) + j]**2 + tab[1][i * (m//bs) + j]**2) == r :
-                c =  'k' # couleur noire
-                l = 2 # épaisseur du trait du vecteur
-            elif np.sqrt(tab[0][i * (m//bs) + j]**2 + tab[1][i * (m//bs) + j]**2)  <= seuil: # calcul de la
-                c = 'm' # magenta
-                l = 1
-                count +=1
-            else:
-                c = 'r'
-                l = 2
-            rect = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=l,edgecolor=c,facecolor='none')
-            rect2 = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=l,edgecolor=c,facecolor='none')
-            arrow = patches.Arrow(j*bs + bs//2,i*bs + bs//2 ,tabx[i * (m//bs) + j],taby[i * (m//bs) + j], width=0.7,edgecolor='r',facecolor='none')
-            ax[1].add_patch(arrow)
-            ax[0].add_patch(rect)
-            ax[1].add_patch(rect2)
-    plt.tight_layout()
-    plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
+    arrow = patches.Arrow(j*bs + bs//2,i*bs + bs//2 ,xm,ym, width=1.0,edgecolor='r',facecolor='none')
+    ax[1].add_patch(arrow)
+    ax[0].add_patch(rect)
+    ax[1].add_patch(rect2)
+
+    if v:
+        print('itération : '+str(j))
+        displayImg(orig,temp,corr,x,y,r)
+
+    # SAUVEGARDE + NOM | AFFICHAGE
+    #plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0" + "_"+str(axis1)+"ax1"+".png")
+    plt.show()
+
+    # AFFICHAGE BLOC CORRECTS : err < 25 pixels
     print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)))
+    return orig,temp,corr,x,y,r
+    #return tabx,taby
+
+def compareImg(original,shift,template,bloc):
+    n,m = np.shape(original)
+    fig, (ax_orig, ax_shift, ax_template) = plt.subplots(1, 3,figsize=(10, 20))
+
+
+    arrowx1 = patches.Arrow(40,0 ,0,207, width=1.0,edgecolor='r',facecolor='none')
+    arrowx2 = patches.Arrow(40,0 ,0,207, width=1.0,edgecolor='r',facecolor='none')
+    arrowx3 = patches.Arrow(40,0 ,0,207, width=1.0,edgecolor='r',facecolor='none')
+
+    arrowy1 = patches.Arrow(0,120 ,207,0, width=1.0,edgecolor='r',facecolor='none')
+    arrowy2 = patches.Arrow(0,120 ,207,0, width=1.0,edgecolor='r',facecolor='none')
+    arrowy3 = patches.Arrow(0,120 ,207,0, width=1.0,edgecolor='r',facecolor='none')
+
+    ax_shift.add_patch(arrowx3)
+    ax_shift.add_patch(arrowy3)
+    ax_shift.imshow(shift)
+    ax_shift.set_title('Shift')
+
+    ax_template.add_patch(arrowx1)
+    ax_template.add_patch(arrowy1)
+    ax_template.imshow(template)
+    ax_template.set_title('Template ' + str(bloc))
+
+    ax_orig.imshow(original)
+    ax_orig.set_title('Original')
+    ax_orig.add_patch(arrowx2)
+    ax_orig.add_patch(arrowy2)
+
+    fig.show()
+
+
+def displayImg(original,template,corr,x,y,r):
+    n,m = np.shape(original)
+    fig, (ax_orig, ax_template, ax_corr, ax_corr2) = plt.subplots(1, 4,figsize=(10, 20))
+    ax_orig.imshow(original)
+    ax_orig.set_title('Original')
+
+    ax_template.imshow(template)
+    ax_template.set_title('Template')
+
+    ax_corr.imshow(corr)
+    nn , mm = np.shape(corr)
+    nc = nn // 2
+    mc = mm // 2
+    rect = patches.Rectangle((nc - r,mc - r),2 * r,2 * r,linewidth=1,edgecolor='r',facecolor='none')
+    ax_corr.add_patch(rect)
+    ax_corr.set_title('Cross-correlation')
+
+    rect2 = patches.Rectangle((nc - r,mc - r),2 * r,2 * r,linewidth=1,edgecolor='r',facecolor='none')
+    ax_orig.add_patch(rect2)
+
+    ax_orig.plot(x, y, 'ro')
+    ax_orig.plot(n/2,n/2, 'rx')
+    #ax_template.plot(x, y, 'ro')
+
+    ax_corr2.imshow(corr[nc - r:nc + r, mc - r:mc + r])
+    ax_corr2.set_title('Cross-correlation [' + str(r) + 'x' + str(r) + "]")
+    ax_corr2.plot(x - nc + r, y - mc + r, 'ro')
+    fig.show()
+
+    print("(x,y) = ("+str(x)+','+str(y)+')' )
+
+def gaussianFilter(im1,factor):
+    kernel = np.ones((factor,factor),np.float32)/(factor**2)
+    target = cv2.filter2D(im1,-1,kernel)
+    return target
