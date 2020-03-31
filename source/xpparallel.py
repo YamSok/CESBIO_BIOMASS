@@ -278,11 +278,11 @@ size = mpi.COMM_WORLD.Get_size() # Nombre de process"
 if rank == 0:
     t0 = time.time()
 
-axis0 = 15 # décalage horizontal vers la gauche
-axis1 = 15  # décalage vertical vers le bas
+axis0 = 0 # décalage horizontal vers la gauche
+axis1 = 0  # décalage vertical vers le bas
 seuil = 15 # Seuil de norme pour les vecteur déplacements en px (rouge si > , magenta si <)
 bs = 256 # Bloc size
-f = 6 # Facteur de recouvrement
+f = 3 # Facteur de recouvrement
 #r = 25 # norme maximale en pixel admise pour le vecteur déplacement
     #
     # ### Partie Visualisation ###
