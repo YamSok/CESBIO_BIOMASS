@@ -106,13 +106,13 @@ def decoupage(b2,b1,bs,r,start,end):
                 #print("rank : " + str(rank) + " | bloc #" + str(i * (m//bs) + j))
                 band2Block = np.copy(b2[i*bs:(i+1)*bs,j*bs:(j+1)*bs])
                 band1Block = np.copy(b1[i*bs:(i+1)*bs,j*bs:(j+1)*bs])
-                templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])
+                templateBlock = np.copy(band1Block[10:bs-10,10:bs-10])
                 orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock,r)
                 xm = x-bs/2
                 ym = y-bs/2
                 tabx.append(xm)
                 taby.append(ym)
-                if np.sqrt(xm**2 + ym**2) < 25 :
+                if np.sqrt(xm**2 + ym**2) < 10 :
                     count += 1
                 # tabx.append(i * (m//bs) + j)
     #print("rank : " + str(rank) + " | count : " + str(count))
@@ -131,13 +131,13 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
             if i * (f * (m // bs) - (f-1)) + j  >= start and i * (f * (m // bs) - (f-1)) + j < end: # Vérification que le processus doit bien traiter ce bloc
                 band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])  # Selection des blocs sur band 1 et 2
                 band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
-                templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])  # Selection du sous bloc
+                templateBlock = np.copy(band1Block[10:bs-10,10:bs-10])  # Selection du sous bloc
                 orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock) # Calcul du déplacement
                 xm = x-bs/2
                 ym = y-bs/2
                 tabx.append(xm)
                 taby.append(ym)
-                if np.sqrt(xm**2 + ym**2) < 25 :
+                if np.sqrt(xm**2 + ym**2) < 10 :
                     count += 1
     return tabx,taby,count
 
@@ -278,11 +278,11 @@ size = mpi.COMM_WORLD.Get_size() # Nombre de process"
 if rank == 0:
     t0 = time.time()
 
-axis0 = 0 # décalage horizontal vers la gauche
-axis1 = 0  # décalage vertical vers le bas
-seuil = 15 # Seuil de norme pour les vecteur déplacements en px (rouge si > , magenta si <)
+axis0 = 15 # décalage horizontal vers la gauche
+axis1 = 15  # décalage vertical vers le bas
+seuil = 10 # Seuil de norme pour les vecteur déplacements en px (rouge si > , magenta si <)
 bs = 256 # Bloc size
-f = 3 # Facteur de recouvrement
+f = 2 # Facteur de recouvrement
 #r = 25 # norme maximale en pixel admise pour le vecteur déplacement
     #
     # ### Partie Visualisation ###
