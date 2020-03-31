@@ -28,7 +28,7 @@ def choice():
     for i in range(len(a)):
         print(rez2[i])
 
-    cin = input("Entre le numéro résulat à visuliser : ")
+    cin = input("Entre le numéro résulat à visualiser : ")
 
     return a[int(cin)]
 
