@@ -276,13 +276,22 @@ rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
 size = mpi.COMM_WORLD.Get_size() # Nombre de process"
 
 if rank == 0:
+    axis0 = 15#input("Axis 0 : ")
+    axis1 = 15#input("Axis 1 : ")
+    seuil = 10
+    bs = 256
+    f = int(input("f ="))
+    data = [axis0, axis1, seuil, bs, f]
+    #val = 'test'# input("met un truc stp")
     t0 = time.time()
+else:
+    data = []
 
-axis0 = 15 # décalage horizontal vers la gauche
-axis1 = 15  # décalage vertical vers le bas
-seuil = 10 # Seuil de norme pour les vecteur déplacements en px (rouge si > , magenta si <)
-bs = 256 # Bloc size
-f = 3 # Facteur de recouvrement
+# axis0 = 15 # décalage horizontal vers la gauche
+# axis1 = 15  # décalage vertical vers le bas
+# seuil = 10 # Seuil de norme pour les vecteur déplacements en px (rouge si > , magenta si <)
+# bs = 256 # Bloc size
+# f = 3 # Facteur de recouvrement
 #r = 25 # norme maximale en pixel admise pour le vecteur déplacement
     #
     # ### Partie Visualisation ###
@@ -292,9 +301,14 @@ f = 3 # Facteur de recouvrement
     # b1,b2 = shiftSelec(band1,band2,axis0,axis1)
     # tab = np.load("../decoup/a2.npy")
     # visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
+mpi.COMM_WORLD.barrier()
+
+data = mpi.COMM_WORLD.bcast(data, root=0)
+axis0, axis1, seuil, bs, f = data
+
 main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
 if rank == 0:
     t1 = time.time()
-    print("Temps d'exec : " + str((t1 - t0)//60) + "min" + str((t1 - t0)%60))
+    print("Temps d'exec : " + str((t1 - t0)//60) + "min" + str("%.2f" % ((t1 - t0)%60)))
