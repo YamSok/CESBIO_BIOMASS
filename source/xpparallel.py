@@ -280,7 +280,11 @@ if rank == 0:
     axis1 = 15#input("Axis 1 : ")
     seuil = 10
     bs = 256
-    f = int(input("f ="))
+    print()
+    print("##############################")
+    print("##############################")
+    print('')
+    f = int(input("Entrez le facteur de recouvrement : "))
     data = [axis0, axis1, seuil, bs, f]
     #val = 'test'# input("met un truc stp")
     t0 = time.time()
