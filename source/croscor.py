@@ -9,7 +9,7 @@ from matplotlib.ticker import MultipleLocator
 from matplotlib.pyplot import figure
 import matplotlib.patches as patches
 import matplotlib as mpl
-
+import os
 #
 #
 # def shiftSelec(im1,im2,axis0,axis1):
@@ -19,6 +19,10 @@ import matplotlib as mpl
 #     b1 = selection(im1,115,1651,30,1054)
 #     return b1,b2
 
+################################################################################
+############################# Prétraitement ####################################
+################################################################################
+
 def shiftSelec(im1,im2,axis0,axis1):
     band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
     #b2 = selection(band2_s,115,1651,30,1054)
@@ -26,12 +30,165 @@ def shiftSelec(im1,im2,axis0,axis1):
     b1 = selection(im1,115 + 2 *256,1651,30 + 256 ,1054)
     return b1,b2
 
-
-
 def selection(img,x0,x1,y0,y1):
     h = abs(x0 - x1)
     w = abs(y0 - y1)
     return img[x0:x0+h,y0:y0+w]
+
+################################################################################
+################################ Calcul ########################################
+################################################################################
+
+# CALCUL DE LA CORRELATION CROISEE ENTRE original ET template
+def decalageBloc(original, template):
+    r = 25
+    orig = np.copy(original)  #prévenir pbs de pointeurs python
+    temp = np.copy(template)
+
+    orig -= original.mean()
+    orig = orig/np.std(orig)
+    temp -= template.mean()
+    temp = temp/np.std(temp)
+
+    corr = signal.correlate2d(orig, temp, boundary='symm', mode='same')
+    n,m = np.shape(corr)
+    nc = n // 2
+    mc = m // 2
+    y, x = np.unravel_index(np.argmax(corr[nc - r:nc + r, mc - r:mc + r]), corr[nc - r:nc + r, mc - r:mc + r].shape)  # find the match
+    y = y + mc - r
+    x = x + nc - r
+
+    return orig, temp, corr, x, y
+
+# APPLICATION CORRELATION CROISEE SUR DES BLOCS SUPERPOSES
+def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
+    n,m = np.shape(b2)
+    # VARIABLES
+    tabx=[] # stockage décalage x
+    taby=[] # stockage décalage y
+    count = 0 # compte des blocs corrects
+
+    for i in range(f * (n//bs) - (f-1)): # Parcours des blocs superposés (incertain)
+        for j in range(f * (m//bs)- (f-1)):
+            if i * (f * (m // bs) - (f-1)) + j  >= start and i * (f * (m // bs) - (f-1)) + j < end: # Vérification que le processus doit bien traiter ce bloc
+                band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])  # Selection des blocs sur band 1 et 2
+                band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
+                templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])  # Selection du sous bloc
+                orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock) # Calcul du déplacement
+                xm = x-bs/2
+                ym = y-bs/2
+                tabx.append(xm)
+                taby.append(ym)
+                if np.sqrt(xm**2 + ym**2) < 25 :
+                    count += 1
+    return tabx,taby,count
+
+
+
+# DONNE LE NOMBRE DE BLOCS AVEC DECALGE < SEUIL
+def countCorrect(tab,seuil,nb, verbose=False):
+    count = 0
+    dist = []
+    for i in range(nb):
+        distance = np.sqrt(tab[0][i]**2 + tab[1][i]**2)
+        if verbose :
+            print("Décalage du block " +str(i)+ " : %.2f" % (np.sqrt(tab[0][i]**2 + tab[1][i]**2)*5) + " m.")
+        if distance < seuil:  #distance inférieure à 50 px (c'est beaucoup)
+            count +=1
+        dist.append(distance)
+    if verbose:
+        print(str(count)+" corrects sur "+ str(nb) + " avec une marge de " + str(seuil * 5) +" m.")
+    print("Moyenne des déplacements : " + str(np.mean(distance * 5)))
+    return count, np.mean(distance*5)
+
+
+
+
+################################################################################
+################################ Affichage #####################################
+################################################################################
+
+def visualizeSuperpose(ff,tab): # file features
+#    if f == None:
+#        bs = input("Block size ? :")
+#        axis0 = input("Décalage selon l'axe 0 :")
+#        axis1 = input("Décalage selon l'axe 1 :")
+    f = int(ff["f"])
+    bs = int(ff["bs"])
+    ax0 = int(ff["ax0"])
+    ax1 = int(ff["ax1"])
+    seuil = int(ff["seuil"])
+    count = int(ff["count"])
+    b1 = np.load("../data/band1.npy")
+    b2 = np.load("../data/band2.npy")
+    b1, b2 = shiftSelec(b1,b2,ax0,ax1)
+    r = 25
+    n,m = np.shape(b2)
+    nb = (f*(n // bs) - (f-1)) * (f*(m // bs) - (f-1)) # Nombre de blocs dans l'image
+    fig,ax = plt.subplots(1,2,figsize=(10,10))
+    ax[0].imshow(b2)
+    ax[1].imshow(b1)
+    count = 0
+
+    for i in range(f * (n//bs) - (f-1)) :
+        for j in range(f * (m//bs) - (f-1)) :
+
+            if np.sqrt(tab[0][i * (f * (m//bs) - (f-1)) + j]**2 + tab[1][i *(f * (m//bs) - (f-1)) + j]**2) == r :
+                c =  'k'
+                l = 1
+            elif np.sqrt(tab[0][i * (f * (m//bs) - (f-1)) + j]**2 + tab[1][i * (f * (m//bs) - (f-1)) + j]**2)  <= seuil:
+                c = 'm'
+                l = 1
+                count +=1
+            else:
+                c = 'r'
+                l = 1
+            #rect = patches.Rectangle( (int(j/f) * bs, int((i/f) * bs)) ,bs,bs,linewidth=l,edgecolor='k',facecolor='none')
+            #rect2 = patches.Rectangle( (int(j/f) * bs, int((i/f) * bs)) ,bs,bs,linewidth=l,edgecolor='k',facecolor='none')
+
+            arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.7,edgecolor=c,facecolor='none')
+            ax[1].add_patch(arrow)
+            #ax[0].add_patch(rect)
+            #ax[1].add_patch(rect2)
+    plt.tight_layout()
+
+    #plt.savefig("b2")
+    accu = round((count / nb * 100))
+    plt.savefig("../results/"+ str(f) + "f_" + str(bs) + "bs_" + str(ax0) + "sx_" + str(ax0) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu.png")
+# DONNE LE NOMBRE DE BLOCS AVEC DECALGE < SEUIL
+
+################################################################################
+################################ Outils ########################################
+################################################################################
+
+def choice():
+    os.chdir('../decoup')
+    rez = os.popen('ls -t').read()
+    a = rez.split()
+    rez2 = [str(i) + ' - ' + a[i] for i in range(len(a)) ]
+    print("Liste des résulats (du plus récent au moins récent)")
+    for i in range(len(a)):
+        print(rez2[i])
+
+    cin = input("Entre le numéro résulat à visualiser : ")
+
+    return a[int(cin)]
+
+def ExtractFeatures(filename):
+    #test = "256bs_15sx_15sy_25r_15seuil_0count.png"
+    liste = filename.split('_')
+    features = ['f', 'bs', 'ax0', 'ax1', 'seuil', 'count']
+    objectFeatures = {}
+    for i in range(len(features)):
+        objectFeatures[features[i]] = "".join([liste[i][s] for s in range(len(liste[i])) if liste[i][s].isdigit()])
+    return objectFeatures
+
+
+
+################################################################################
+################################ Notebook #####################################
+################################################################################
+
 
 def miseEnBouche(band1,band2):
     fig,ax = plt.subplots(1,2, figsize=(15,8))
@@ -79,100 +236,10 @@ def displayImg(original,template,corr,x,y):
 
     print("(x,y) = ("+str(x)+','+str(y)+')' )
 
-# CALCUL DE LA CORRELATION CROISEE ENTRE original ET template
-def decalageBloc(original, template):
-    r = 25
-    orig = np.copy(original)  #prévenir pbs de pointeurs python
-    temp = np.copy(template)
 
-    orig -= original.mean()
-    orig = orig/np.std(orig)
-    temp -= template.mean()
-    temp = temp/np.std(temp)
-
-    corr = signal.correlate2d(orig, temp, boundary='symm', mode='same')
-    n,m = np.shape(corr)
-    nc = n // 2
-    mc = m // 2
-    y, x = np.unravel_index(np.argmax(corr[nc - r:nc + r, mc - r:mc + r]), corr[nc - r:nc + r, mc - r:mc + r].shape)  # find the match
-    y = y + mc - r
-    x = x + nc - r
-
-    return orig, temp, corr, x, y
-
-# APPLICATION CORRELATION CROISEE SUR DES BLOCS SUPERPOSES
-def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
-    n,m = np.shape(b2)
-    # VARIABLES
-    tabx=[] # stockage décalage x
-    taby=[] # stockage décalage y
-    count = 0 # compte des blocs corrects
-
-    for i in range(f * (n//bs) - (f-1)): # Parcours des blocs superposés (incertain)
-        for j in range(f * (m//bs)- (f-1)):
-            if i * (f * (m // bs) - (f-1)) + j  >= start and i * (f * (m // bs) - (f-1)) + j < end: # Vérification que le processus doit bien traiter ce bloc
-                band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])  # Selection des blocs sur band 1 et 2
-                band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
-                templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])  # Selection du sous bloc
-                orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock) # Calcul du déplacement
-                xm = x-bs/2
-                ym = y-bs/2
-                tabx.append(xm)
-                taby.append(ym)
-                if np.sqrt(xm**2 + ym**2) < 25 :
-                    count += 1
-    return tabx,taby,count
-
-#AFFICHAGE DES RESULTATS DU DECOUPAGE SUPERPOSE
-def visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,f,seuil):
-    r = 25
-    n,m = np.shape(b2)
-    nb = (f*(n // bs) - (f-1)) * (f*(m // bs) - (f-1)) # nombr de blocs dans l'image
-    fig,ax = plt.subplots(1,2,figsize=(10,10))
-    ax[0].imshow(b2)
-    ax[1].imshow(b1)
-    count = 0
-    for i in range(f * (n//bs) - (f-1)) :
-        for j in range(f * (m//bs) - (f-1)) :
-
-            if np.sqrt(tab[0][i * (f * (m//bs) - (f-1)) + j]**2 + tab[1][i *(f * (m//bs) - (f-1)) + j]**2) == r :
-                c =  'k'
-                l = 1
-            elif np.sqrt(tab[0][i * (f * (m//bs) - (f-1)) + j]**2 + tab[1][i * (f * (m//bs) - (f-1)) + j]**2)  <= seuil:
-                c = 'm'
-                l = 1
-                count +=1
-            else:
-                c = 'r'
-                l = 1
-            rect = patches.Rectangle( (int(j/f) * bs, int((i/f) * bs)) ,bs,bs,linewidth=l,edgecolor='k',facecolor='none')
-            rect2 = patches.Rectangle( (int(j/f) * bs, int((i/f) * bs)) ,bs,bs,linewidth=l,edgecolor='k',facecolor='none')
-
-            arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.7,edgecolor=c,facecolor='none')
-            ax[1].add_patch(arrow)
-            ax[0].add_patch(rect)
-            ax[1].add_patch(rect2)
-
-    plt.tight_layout()
-    accu = (count / nb * 100)
-    plt.savefig("../results/"+ str(f) + "f_" + str(bs) + "bs_" + str(axis0) + "ax1_" + str(axis1) + "ax1_" + str(seuil) + "seuil_" + str(accu) + "accu..png")
-    # print(str(count)+" blocs corrects/ "+str((n//bs)*(m//bs)) + " | " + str(accu) + "% de précision")
-
-# DONNE LE NOMBRE DE BLOCS AVEC DECALGE < SEUIL
-def countCorrect(tab,seuil,nb, verbose=False):
-    count = 0
-    dist = []
-    for i in range(nb):
-        distance = np.sqrt(tab[0][i]**2 + tab[1][i]**2)
-        if verbose :
-            print("Décalage du block " +str(i)+ " : %.2f" % (np.sqrt(tab[0][i]**2 + tab[1][i]**2)*5) + " m.")
-        if distance < seuil:  #distance inférieure à 50 px (c'est beaucoup)
-            count +=1
-        dist.append(distance)
-    if verbose:
-        print(str(count)+" corrects sur "+ str(nb) + " avec une marge de " + str(seuil * 5) +" m.")
-    print("Moyenne des déplacements : " + str(np.mean(distance * 5)))
-    return count, np.mean(distance*5)
+################################################################################
+################################ old ###########################################
+################################################################################
 
 
 ## Vieilles fonctions, pour le rapport peut êtrye
