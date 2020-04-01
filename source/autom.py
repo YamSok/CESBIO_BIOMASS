@@ -93,12 +93,20 @@ def visualizeSuperpose(ff,tab): # file features
     # plt.savefig("results/"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")
 
 # SELECTION DE DIMENSIONS EN PUISSANCE DE 2 | SHIFT
+# def shiftSelec(im1,im2,axis0,axis1):
+#     band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
+#     #b2 = selection(band2_s,115,1651,30,1054)
+#     b2 = selection(10*np.log(band2_s),115,1651,30,1054)
+#     b1 = selection(im1,115,1651,30,1054)
+#     return b1,b2
+
 def shiftSelec(im1,im2,axis0,axis1):
     band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
     #b2 = selection(band2_s,115,1651,30,1054)
-    b2 = selection(10*np.log(band2_s),115,1651,30,1054)
-    b1 = selection(im1,115,1651,30,1054)
+    b2 = selection(10*np.log(band2_s),115 + 2 * 256,1651,30 + 256,1054)
+    b1 = selection(im1,115 + 2 *256,1651,30 + 256 ,1054)
     return b1,b2
+
 
 def selection(img,x0,x1,y0,y1):
     h = abs(x0 - x1)
