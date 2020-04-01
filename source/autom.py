@@ -86,7 +86,7 @@ def visualizeSuperpose(ff,tab): # file features
     plt.tight_layout()
 
     #plt.savefig("b2")
-    accu = (count / nb * 100)
+    accu = round((count / nb * 100))
     plt.savefig("../results/"+ str(f) + "f_" + str(bs) + "bs_" + str(ax0) + "sx_" + str(ax0) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu..png")
 
     #plt.savefig("../results/sup_"+str(bs) + "x" + str(bs)+"_"+str(axis0) + "ax0_"+str(axis1)+"ax1_"+str(r)+"r_"+str(seuil)+"seuil_"+str(count)+ "count.png")

@@ -276,8 +276,8 @@ rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
 size = mpi.COMM_WORLD.Get_size() # Nombre de process"
 
 if rank == 0:
-    axis0 = 15#input("Axis 0 : ")
-    axis1 = 15#input("Axis 1 : ")
+    axis0 = 15 #input("Axis 0 : ")
+    axis1 = 15 #input("Axis 1 : ")
     seuil = 10
     bs = 256
     print()
