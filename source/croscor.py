@@ -79,7 +79,7 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
                 ym = y-bs/2
                 tabx.append(xm)
                 taby.append(ym)
-                if np.sqrt(xm**2 + ym**2) < 25 :
+                if np.sqrt(xm**2 + ym**2) < 10 :
                     count += 1
     return tabx,taby,count
 

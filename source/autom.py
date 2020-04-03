@@ -14,7 +14,7 @@ Created on Sat Mar 28 17:03:26 2020
 # from matplotlib.ticker import MultipleLocator
 # from matplotlib.pyplot import figure
 # import matplotlib.patches as patches
-# import matplotlib as mpl
+import matplotlib as mpl
 mpl.rcParams['figure.dpi'] = 300
 import warnings
 warnings.filterwarnings("ignore")
