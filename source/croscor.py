@@ -114,7 +114,7 @@ def visualizeSuperpose(ff,tab): # file features
     ax0 = int(ff["ax0"])
     ax1 = int(ff["ax1"])
     seuil = int(ff["seuil"])
-    count = int(ff["count"])
+    accu = int(ff["accu"])
     b1 = np.load("../data/band1.npy")
     b2 = np.load("../data/band2.npy")
     b1, b2 = shiftSelec(b1,b2,ax0,ax1)
@@ -149,7 +149,7 @@ def visualizeSuperpose(ff,tab): # file features
     plt.tight_layout()
 
     #plt.savefig("b2")
-    accu = round((count / nb * 100))
+    # accu = round((count / nb * 100))
     plt.savefig("../results/"+ str(f) + "f_" + str(bs) + "bs_" + str(ax0) + "sx_" + str(ax0) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu.png")
 
 ################################################################################
@@ -172,7 +172,7 @@ def choice():
 def ExtractFeatures(filename):
     #test = "256bs_15sx_15sy_25r_15seuil_0count.png"
     liste = filename.split('_')
-    features = ['f', 'bs', 'ax0', 'ax1', 'seuil', 'count']
+    features = ['f', 'bs', 'ax0', 'ax1', 'seuil', 'accu']
     objectFeatures = {}
     for i in range(len(features)):
         objectFeatures[features[i]] = "".join([liste[i][s] for s in range(len(liste[i])) if liste[i][s].isdigit()])
