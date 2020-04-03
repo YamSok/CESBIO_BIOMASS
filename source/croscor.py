@@ -83,8 +83,6 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
                     count += 1
     return tabx,taby,count
 
-
-
 # DONNE LE NOMBRE DE BLOCS AVEC DECALGE < SEUIL
 def countCorrect(tab,seuil,nb, verbose=False):
     count = 0
@@ -100,8 +98,6 @@ def countCorrect(tab,seuil,nb, verbose=False):
         print(str(count)+" corrects sur "+ str(nb) + " avec une marge de " + str(seuil * 5) +" m.")
     print("Moyenne des déplacements : " + str(np.mean(distance * 5)))
     return count, np.mean(distance*5)
-
-
 
 
 ################################################################################
@@ -155,7 +151,6 @@ def visualizeSuperpose(ff,tab): # file features
     #plt.savefig("b2")
     accu = round((count / nb * 100))
     plt.savefig("../results/"+ str(f) + "f_" + str(bs) + "bs_" + str(ax0) + "sx_" + str(ax0) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu.png")
-# DONNE LE NOMBRE DE BLOCS AVEC DECALGE < SEUIL
 
 ################################################################################
 ################################ Outils ########################################
@@ -183,12 +178,9 @@ def ExtractFeatures(filename):
         objectFeatures[features[i]] = "".join([liste[i][s] for s in range(len(liste[i])) if liste[i][s].isdigit()])
     return objectFeatures
 
-
-
 ################################################################################
 ################################ Notebook #####################################
 ################################################################################
-
 
 def miseEnBouche(band1,band2):
     fig,ax = plt.subplots(1,2, figsize=(15,8))
@@ -235,7 +227,6 @@ def displayImg(original,template,corr,x,y):
     fig.show()
 
     print("(x,y) = ("+str(x)+','+str(y)+')' )
-
 
 ################################################################################
 ################################ old ###########################################
