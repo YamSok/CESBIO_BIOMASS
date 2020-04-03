@@ -67,33 +67,16 @@ if rank == 0:
     print('')
     f = int(input("Entrez le facteur de recouvrement : "))
     data = [axis0, axis1, seuil, bs, f]
-    #val = 'test'# input("met un truc stp")
     t0 = time.time()
 else:
     data = []
 
-# axis0 = 15 # décalage horizontal vers la gauche
-# axis1 = 15  # décalage vertical vers le bas
-# seuil = 10 # Seuil de norme pour les vecteur déplacements en px (rouge si > , magenta si <)
-# bs = 256 # Bloc size
-# f = 3 # Facteur de recouvrement
-#r = 25 # norme maximale en pixel admise pour le vecteur déplacement
-    #
-    # ### Partie Visualisation ###
-    #
-    # band1 = np.load("../data/band1.npy")
-    # band2 = np.load("../data/band2.npy")
-    # b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-    # tab = np.load("../decoup/a2.npy")
-    # visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil)
 mpi.COMM_WORLD.barrier()
-
 data = mpi.COMM_WORLD.bcast(data, root=0)
 axis0, axis1, seuil, bs, f = data
-
 main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
-if rank == 0:
+if rank == :
     t1 = time.time()
     print("Temps d'exec : " + str((t1 - t0)//60) + "min" + str("%.2f" % ((t1 - t0)%60)))

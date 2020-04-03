@@ -10,8 +10,8 @@ from matplotlib.pyplot import figure
 import matplotlib.patches as patches
 import matplotlib as mpl
 import os
-#
-#
+
+
 # def shiftSelec(im1,im2,axis0,axis1):
 #     band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
 #     #b2 = selection(band2_s,115,1651,30,1054)
