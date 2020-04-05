@@ -26,32 +26,32 @@ def main(axis0,axis1,bs,f,seuil):
         nd = end - start
 
     # print("Nombre de blocs à traiter : " + str(nb))
-    print("rank : " + str(rank) + " | start : " + str(start) + " | end : " + str(end))
+    # print("rank : " + str(rank) + " | start : " + str(start) + " | end : " + str(end))
 
-    # tabx,taby,count = decoupageSuperpose(b2,b1,bs,r,f,start,end)
+    tabx,taby,count = decoupageSuperpose(b2,b1,bs,r,f,start,end)
 
     mpi.COMM_WORLD.barrier()  # Attente de tous les processus
 
-    # c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM)
+    c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM)
 
     # Regroupement des données calculés par chaque processus
-    # tabx = mpi.COMM_WORLD.allgather(tabx)
-    # taby = mpi.COMM_WORLD.allgather(taby)
+    tabx = mpi.COMM_WORLD.allgather(tabx)
+    taby = mpi.COMM_WORLD.allgather(taby)
 
     # Correction du format renvoyé par la fonction allgather
     # Passage de 2 matrice à  1 matrice ()
     # # Utile pour
-    # if rank == 0:
-    #     accu = int(c / nb * 100)
-    #     print(str(c)+" blocs corrects/ "+str(nb) + " | " + str(accu) + "% de précision")
-    #     tab = np.zeros((2,nb))
-    #     for k in range(size):
-    #         for i in range(len(tabx[k])):
-    #             tab[0][k * len(tabx[0]) + i] = tabx[k][i]
-    #             tab[1][k * len(taby[0]) + i] = taby[k][i]
-    #
-    #     np.save("../decoup/" + str(f) + "f_" + str(bs) + "bs" + "_"+str(axis0) + "sx_" + str(axis1) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu.npy", tab)  # Enregistrement des résultats pour visualisation
-    #     #tab = np.load("../decoup/tab_superpose2.npy")  # Chargement des résultats pour visualisation
+    if rank == 0:
+        accu = int(c / nb * 100)
+        print(str(c)+" blocs corrects/ "+str(nb) + " | " + str(accu) + "% de précision")
+        tab = np.zeros((2,nb))
+        for k in range(size):
+            for i in range(len(tabx[k])):
+                tab[0][k * len(tabx[0]) + i] = tabx[k][i]
+                tab[1][k * len(taby[0]) + i] = taby[k][i]
+
+        np.save("../decoup/" + str(f) + "f_" + str(bs) + "bs" + "_"+str(axis0) + "sx_" + str(axis1) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu.npy", tab)  # Enregistrement des résultats pour visualisation
+        #tab = np.load("../decoup/tab_superpose2.npy")  # Chargement des résultats pour visualisation
     #     #visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil) # Ligne à décommenter si visualisation directe des résultats
 
 
