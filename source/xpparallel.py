@@ -62,7 +62,7 @@ if rank == 0:
     axis0 = 15 #input("Axis 0 : ")
     axis1 = 15 #input("Axis 1 : ")
     seuil = 10
-    bs = 256
+    bs = 128
     print()
     print("##############################")
     print("##############################")
