@@ -2,6 +2,8 @@ import mpi4py.MPI as mpi
 import numpy as np
 from croscor import *
 import time
+import warnings
+warnings.filterwarnings("ignore")
 
 # PROGRAMME PRINCIPAL
 def main(axis0,axis1,bs,f,seuil):
