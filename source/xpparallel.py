@@ -62,12 +62,14 @@ if rank == 0:
     axis0 = 15 #input("Axis 0 : ")
     axis1 = 15 #input("Axis 1 : ")
     seuil = 10
-    bs = 128
+    # bs = 128
     print()
     print("##############################")
     print("##############################")
     print('')
     f = int(input("Entrez le facteur de recouvrement : "))
+    bs = int(input("Entrez le block size : "))
+
     data = [axis0, axis1, seuil, bs, f]
     t0 = time.time()
 else:
