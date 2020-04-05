@@ -142,8 +142,12 @@ def visualizeSuperpose(ff,tab): # file features
             #rect = patches.Rectangle( (int(j/f) * bs, int((i/f) * bs)) ,bs,bs,linewidth=l,edgecolor='k',facecolor='none')
             #rect2 = patches.Rectangle( (int(j/f) * bs, int((i/f) * bs)) ,bs,bs,linewidth=l,edgecolor='k',facecolor='none')
 
-            arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.1,edgecolor=c,facecolor='none')
-            ax[1].add_patch(arrow)
+            ax[1].quiver(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], angles='xy', scale_units='xy', color = c)
+
+            # affichage de traits
+            # arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.1,edgecolor=c,facecolor='none')
+            # ax[1].add_patch(arrow)
+
             #ax[0].add_patch(rect)
             #ax[1].add_patch(rect2)
     plt.tight_layout()
