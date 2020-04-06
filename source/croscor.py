@@ -133,6 +133,8 @@ def visualizeSuperpose(ff,tab): # file features
                 c =  'k'
                 l = 1
 
+                plt.plot(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2), color = c, marker = '.')
+
                 arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.1,edgecolor=c,facecolor='none')
                 ax[1].add_patch(arrow)
 
@@ -155,8 +157,8 @@ def visualizeSuperpose(ff,tab): # file features
                 c = 'r'
                 l = 1
 
-                plt.plot(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2), color = c, marker = '.')
-
+                arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.1,edgecolor=c,facecolor='none')
+                ax[1].add_patch(arrow)
                 #plt.scatter(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2), color = c, )
 
 
