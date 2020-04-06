@@ -3,6 +3,8 @@ misc/
 be/
 biblio/
 source/.ipynb_checkpoints
-source/__pycache__
+source/__pycache_
+*.zip
+*.dat
 *.png
 

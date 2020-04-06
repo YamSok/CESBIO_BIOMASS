@@ -41,7 +41,7 @@ def selection(img,x0,x1,y0,y1):
 
 # CALCUL DE LA CORRELATION CROISEE ENTRE original ET template
 def decalageBloc(original, template):
-    r = 25
+    r = 10
     orig = np.copy(original)  #prévenir pbs de pointeurs python
     temp = np.copy(template)
 
@@ -136,7 +136,9 @@ def visualizeSuperpose(ff,tab): # file features
                 arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.1,edgecolor=c,facecolor='none')
                 ax[1].add_patch(arrow)
 
-                #ax[1].quiver(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], angles='xy', scale_units='xy', color = c, headlength = 0.1, headwidth = 0.1)
+                # Q1 = ax[1].quiver(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], angles='xy', color = c, units='width')#, headlength = 0.1, headwidth = 0.1)
+                # qk = ax[1].quiverkey(Q1, 0.9, 0.9, 2, r'$2 \frac{m}{s}$', labelpos='E',
+                #    coordinates='figure')
 
             elif np.sqrt(tab[0][i * (f * (m//bs) - (f-1)) + j]**2 + tab[1][i * (f * (m//bs) - (f-1)) + j]**2)  <= seuil:
                 c = 'm'
@@ -146,8 +148,9 @@ def visualizeSuperpose(ff,tab): # file features
                 arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.1,edgecolor=c,facecolor='none')
                 ax[1].add_patch(arrow)
 
-                # ax[1].quiver(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], angles='xy', scale_units='xy', color = c, headlength = 0.1, headwidth = 0.1)
-
+                # Q2 = ax[1].quiver(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], angles='xy',  color = c, units='width')#, headlength = 0.1, headwidth = 0.1)
+                # qk = ax[1].quiverkey(Q2, 0.9, 0.9, 2, r'$2 \frac{m}{s}$', labelpos='E',
+                #    coordinates='figure')
             else:
                 c = 'r'
                 l = 1
@@ -345,13 +348,14 @@ def decoupage(band2,band1,bs,i,j,axis0=0,axis1=0,v=False): #bs= blocksize
     band2Block = np.copy(b2[i*bs:(i+1)*bs,j*bs:(j+1)*bs])
     band1Block = np.copy(b1[i*bs:(i+1)*bs,j*bs:(j+1)*bs])
     #print("bloc " + str(i*(m//bs) + j) + " | Var : " + "%.2f" % np.std(band1Block))
-    templateBlock = np.copy(band1Block[5:bs-5,5:bs-5])
+    templateBlock = np.copy(band1Block[10:bs-10,10:bs-10])
     orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock)
     xm = x-bs//2
     ym = y-bs//2
+    print((xm,ym))
     tab[0][i * (m//bs) + j] = xm
     tab[1][i * (m//bs) + j] = ym
-    if np.sqrt(xm**2 + ym**2) == r :
+    if np.sqrt(xm**2 + ym**2) > 10 :
         rect = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=2,edgecolor='r',facecolor='none')
         rect2 = patches.Rectangle((j*bs,i*bs),bs,bs,linewidth=2,edgecolor='r',facecolor='none')
     else :
