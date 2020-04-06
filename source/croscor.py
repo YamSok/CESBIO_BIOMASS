@@ -133,14 +133,20 @@ def visualizeSuperpose(ff,tab): # file features
                 c =  'k'
                 l = 1
 
-                ax[1].quiver(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], angles='xy', scale_units='xy', color = c, headlength = 0.1, headwidth = 0.1)
+                arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.1,edgecolor=c,facecolor='none')
+                ax[1].add_patch(arrow)
+
+                #ax[1].quiver(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], angles='xy', scale_units='xy', color = c, headlength = 0.1, headwidth = 0.1)
 
             elif np.sqrt(tab[0][i * (f * (m//bs) - (f-1)) + j]**2 + tab[1][i * (f * (m//bs) - (f-1)) + j]**2)  <= seuil:
                 c = 'm'
                 l = 1
                 count +=1
 
-                ax[1].quiver(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], angles='xy', scale_units='xy', color = c, headlength = 0.1, headwidth = 0.1)
+                arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.1,edgecolor=c,facecolor='none')
+                ax[1].add_patch(arrow)
+
+                # ax[1].quiver(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], angles='xy', scale_units='xy', color = c, headlength = 0.1, headwidth = 0.1)
 
             else:
                 c = 'r'
