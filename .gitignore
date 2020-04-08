@@ -7,4 +7,5 @@ source/__pycache_
 *.zip
 *.dat
 *.png
+*.ipynb
 

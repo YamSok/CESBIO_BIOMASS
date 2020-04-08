@@ -41,7 +41,7 @@ def selection(img,x0,x1,y0,y1):
 
 # CALCUL DE LA CORRELATION CROISEE ENTRE original ET template
 def decalageBloc(original, template):
-    r = 10
+    r = 15
     orig = np.copy(original)  #prévenir pbs de pointeurs python
     temp = np.copy(template)
 
@@ -143,7 +143,7 @@ def visualizeSuperpose(ff,tab): # file features
                 #    coordinates='figure')
 
             elif np.sqrt(tab[0][i * (f * (m//bs) - (f-1)) + j]**2 + tab[1][i * (f * (m//bs) - (f-1)) + j]**2)  <= seuil:
-                c = 'm'
+                c = 'w'
                 l = 1
                 count +=1
 
@@ -217,8 +217,8 @@ def miseEnBouche(band1,band2):
     ax[0].set_title("BAND 1 - Relevé topographique ")
     fig.colorbar(im1,ax=ax[0])
 
-    im2 = ax[1].imshow(10*np.log(band2),vmin=-40,vmax=0)
-    ax[1].set_title("BAND 2 - Image satellite")
+    im2 = ax[1].imshow(10*np.log(band2/band1),vmin=-40,vmax=0)
+    ax[1].set_title("BAND 2 - Image aéroportée")
     fig.colorbar(im2,ax=ax[1])
 
     plt.tight_layout()
