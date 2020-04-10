@@ -22,7 +22,7 @@ def loadAGB():
     return np.loadtxt("../data/16insituAGB.dat")
 
 
-plt.imshow(10*np.log(band2),vmin=-40,vmax=0,figsize=(10,15))
+plt.imshow(10*np.log(band2),vmin=-40,vmax=0)
 plt.title("BAND 2 - Image aéroportée")
 plt.colorbar()
 parcels = loadParcels()
@@ -30,4 +30,4 @@ for i in range(len(parcels)):
     for j in range(len(parcels[i])):
         plt.scatter(parcels[i][j][0],parcels[i][j][1] , 0.1)
 plt.show()
-plt.savefig("band2_insitu.png")
+plt.savefig("band2_insitu")
