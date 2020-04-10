@@ -5,7 +5,7 @@ biblio/
 source/.ipynb_checkpoints
 source/__pycache_
 *.zip
-*.dat
+
 *.png
 *.ipynb
 

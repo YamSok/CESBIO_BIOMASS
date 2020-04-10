@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-mpl.rcParams['figure.dpi'] = 80
+mpl.rcParams['figure.dpi'] = 300
 
 band1 = np.load("../data/band1.npy")
 band2 = np.load("../data/band2.npy")
@@ -22,7 +22,7 @@ def loadAGB():
     return np.loadtxt("../data/16insituAGB.dat")
 
 
-plt.imshow(10*np.log(band2),vmin=-40,vmax=0)
+plt.imshow(10*np.log(band2),vmin=-40,vmax=0,figsize=(10,15))
 plt.title("BAND 2 - Image aéroportée")
 plt.colorbar()
 parcels = loadParcels()
