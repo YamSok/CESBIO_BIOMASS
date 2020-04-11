@@ -126,19 +126,23 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
     return tabx,taby,count
 
 # DONNE LE NOMBRE DE BLOCS AVEC DECALGE < SEUIL
-def countCorrect(tab,seuil,nb, verbose=False):
+def countCorrect(tab,seuil, verbose=False):
     count = 0
     dist = []
-    for i in range(nb):
+    for i in range(len(tab[0])):
         distance = np.sqrt(tab[0][i]**2 + tab[1][i]**2)
         if verbose :
             print("Décalage du block " +str(i)+ " : %.2f" % (np.sqrt(tab[0][i]**2 + tab[1][i]**2)*5) + " m.")
         if distance < seuil:  #distance inférieure à 50 px (c'est beaucoup)
             count +=1
         dist.append(distance)
-    if verbose:
-        print(str(count)+" corrects sur "+ str(nb) + " avec une marge de " + str(seuil * 5) +" m.")
+    # if verbose:
+    #     print(str(count)+" corrects sur "+ str(nb) + " avec une marge de " + str(seuil * 5) +" m.")
+    print("\n \n")
     print("Moyenne des déplacements : " + str(np.mean(distance * 5)))
+    print("Moyenne des en x : " + str(np.mean(tab[0] * 5)))
+    print("Moyenne des en y : " + str(np.mean(tab[1] * 5)))
+
     return count, np.mean(distance*5)
 
 
