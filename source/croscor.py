@@ -133,8 +133,8 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
     tabx=[] # stockage décalage x
     taby=[] # stockage décalage y
     count = 0 # compte des blocs corrects
-    ncol = m//bs + f * (m-bs)//bs
-    nrow = n//bs + f * (n-bs)//bs
+    ncol = m//bs + f * (m-bs)//bs - 1
+    nrow = n//bs + f * (n-bs)//bs - 1
     for i in range(nrow): # Parcours des blocs superposés (incertain)
         for j in range(ncol):
             if i * ncol + j  >= start and i * ncol + j < end: # Vérification que le processus doit bien traiter ce bloc
@@ -196,29 +196,30 @@ def visualizeSuperpose(ff,tab): # file features
     ax[0].imshow(b2)
     ax[1].imshow(b1)
     count = 0
+    ncol = m//bs + f * (m-bs)//bs - 1
+    nrow = n//bs + f * (n-bs)//bs - 1
+    for i in range(nrow) :
+        for j in range(ncol) :
 
-    for i in range(f * (n//bs) - (f-1)) :
-        for j in range(f * (m//bs) - (f-1)) :
-
-            if np.sqrt(tab[0][i * (f * (m//bs) - (f-1)) + j]**2 + tab[1][i *(f * (m//bs) - (f-1)) + j]**2) == r :
+            if np.sqrt(tab[0][i * ncol + j]**2 + tab[1][i * ncol + j]**2) == r :
                 c =  'k'
                 l = 1
 
                 plt.plot(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2), color = c, marker = '.')
 
-                arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.1,edgecolor=c,facecolor='none')
+                arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * ncol + j],tab[1][i * ncol + j], width=0.1,edgecolor=c,facecolor='none')
                 ax[1].add_patch(arrow)
 
                 # Q1 = ax[1].quiver(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], angles='xy', color = c, units='width')#, headlength = 0.1, headwidth = 0.1)
                 # qk = ax[1].quiverkey(Q1, 0.9, 0.9, 2, r'$2 \frac{m}{s}$', labelpos='E',
                 #    coordinates='figure')
 
-            elif np.sqrt(tab[0][i * (f * (m//bs) - (f-1)) + j]**2 + tab[1][i * (f * (m//bs) - (f-1)) + j]**2)  <= seuil:
+            elif np.sqrt(tab[0][i * ncol + j]**2 + tab[1][i * ncol + j]**2)  <= seuil:
                 c = 'w'
                 l = 1
                 count +=1
 
-                arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.1,edgecolor=c,facecolor='none')
+                arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * ncol + j],tab[1][i * ncol + j], width=0.1,edgecolor=c,facecolor='none')
                 ax[1].add_patch(arrow)
 
                 # Q2 = ax[1].quiver(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], angles='xy',  color = c, units='width')#, headlength = 0.1, headwidth = 0.1)
@@ -228,7 +229,7 @@ def visualizeSuperpose(ff,tab): # file features
                 c = 'r'
                 l = 1
 
-                arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], width=0.1,edgecolor=c,facecolor='none')
+                arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * ncol + j],tab[1][i * ncol + j], width=0.1,edgecolor=c,facecolor='none')
                 ax[1].add_patch(arrow)
                 #plt.scatter(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2), color = c, )
 
