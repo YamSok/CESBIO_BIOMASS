@@ -105,7 +105,7 @@ def decalageBloc(original, template):
     return orig, temp, corr, x, y
 
 # APPLICATION CORRELATION CROISEE SUR DES BLOCS SUPERPOSES
-def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
+def decoupageSuperposeOld(b2,b1,bs,r,f,start,end): # f = factor
     n,m = np.shape(b2)
     # VARIABLES
     tabx=[] # stockage décalage x
@@ -115,6 +115,29 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
     for i in range(f * (n//bs) - (f-1)): # Parcours des blocs superposés (incertain)
         for j in range(f * (m//bs)- (f-1)):
             if i * (f * (m // bs) - (f-1)) + j  >= start and i * (f * (m // bs) - (f-1)) + j < end: # Vérification que le processus doit bien traiter ce bloc
+                band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])  # Selection des blocs sur band 1 et 2
+                band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
+                templateBlock = np.copy(band1Block[10:bs-10,10:bs-10])  # Selection du sous bloc
+                orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock) # Calcul du déplacement
+                xm = x-bs/2
+                ym = y-bs/2
+                tabx.append(xm)
+                taby.append(ym)
+                if np.sqrt(xm**2 + ym**2) < 10 :
+                    count += 1
+    return tabx,taby,count
+
+def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
+    n,m = np.shape(b2)
+    # VARIABLES
+    tabx=[] # stockage décalage x
+    taby=[] # stockage décalage y
+    count = 0 # compte des blocs corrects
+    ncol = m//bs + f * (m-bs)//bs
+    nrow = n//bs + f * (n-bs)//bs
+    for i in range(nrow): # Parcours des blocs superposés (incertain)
+        for j in range(ncol):
+            if i * ncol + j  >= start and i * ncol + j < end: # Vérification que le processus doit bien traiter ce bloc
                 band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])  # Selection des blocs sur band 1 et 2
                 band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
                 templateBlock = np.copy(band1Block[10:bs-10,10:bs-10])  # Selection du sous bloc
