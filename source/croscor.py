@@ -23,17 +23,58 @@ import os
 ############################# Prétraitement ####################################
 ################################################################################
 
+# def shiftSelec(im1,im2,axis0,axis1):
+#     band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
+#     #b2 = selection(band2_s,115,1651,30,1054)
+#     b2 = selection(10*np.log(band2_s),115 + 3 * 256,1651,30 + 2 * 256,1054)
+#     b1 = selection(im1,115 + 3 *256,1651,30 + 2* 256 ,1054)
+#     return b1,b2
+#
+# def selection(img,x0,x1,y0,y1):
+#     h = abs(x0 - x1)
+#     w = abs(y0 - y1)
+#     return img[x0:x0+h,y0:y0+w]
+
+
 def shiftSelec(im1,im2,axis0,axis1):
     band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
     #b2 = selection(band2_s,115,1651,30,1054)
-    b2 = selection(10*np.log(band2_s),115 + 3 * 256,1651,30 + 2 * 256,1054)
-    b1 = selection(im1,115 + 3 *256,1651,30 + 2* 256 ,1054)
+    (x0,x1,y0,y1) = 30 + 2 * 256, 1054, 215 + 3 * 256, 1751
+    b2 = selection(10*np.log(band2_s),coord)
+    b1 = selection(im1,coord)
     return b1,b2
 
-def selection(img,x0,x1,y0,y1):
-    h = abs(x0 - x1)
-    w = abs(y0 - y1)
-    return img[x0:x0+h,y0:y0+w]
+def selection(img,coord, output = False):
+    (x0,x1,y0,y1) = coord
+    w = abs(x0 - x1)
+    h = abs(y0 - y1)
+    if output:
+        fig, ax = plt.subplots(figsize=(10,15))
+        parcels = loadParcels()
+        for i in range(len(parcels)):
+            x = [p[0] for p in parcels[i]]
+            y = [p[1] for p in parcels[i]]
+            plt.scatter(x,y, 0.1)
+        rect = patches.Rectangle((x0,y0),w,h,linewidth=2,edgecolor='r',facecolor='none')
+        ax.imshow(10*np.log(img),vmin=-40,vmax=0)
+        ax.add_patch(rect)
+        plt.show()
+    return img[y0:y0+h,x0:x0+w]
+
+def loadParcels(num = None):
+
+    if num == None: # On charge toutes les parcelles dans une liste
+        print("oui")
+        parcels = []
+        for i in range(1,17):
+            parcels.append(np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(i)+ ".dat"))
+        return [x.astype(int) for x in parcels]
+    else: #  On charge uniquemnent la parcelle numéro "num"
+        parcel = np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(num)+ ".dat")
+        return parcel.astype(int)
+
+def loadAGB():
+    return np.loadtxt("../data/16insituAGB.dat")
 
 ################################################################################
 ################################ Calcul ########################################
