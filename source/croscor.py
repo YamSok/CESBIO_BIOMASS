@@ -39,7 +39,9 @@ import os
 def shiftSelec(im1,im2,axis0,axis1):
     band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
     #b2 = selection(band2_s,115,1651,30,1054)
-    (x0,x1,y0,y1) = (30 + 2 * 256, 1054, 215 + 3 * 256, 1751)
+    margin = 64
+    (x0,x1,y0,y1) = (30 + 2 * 256 - margin, 1054 + margin, 215 + 3 * 256, 1751 + margin)
+    #(x0,x1,y0,y1) = (30 + 2 * 256, 1054, 215 + 3 * 256, 1751)
     coord = (x0,x1,y0,y1)
     b2 = selection(10*np.log(band2_s),coord)
     b1 = selection(im1,coord)

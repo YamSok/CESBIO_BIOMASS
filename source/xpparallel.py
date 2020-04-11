@@ -7,7 +7,7 @@ warnings.filterwarnings("ignore")
 
 # PROGRAMME PRINCIPAL
 def main(axis0,axis1,bs,f,seuil):
-    band1 = np.load("../data/band1_new.npy")
+    band1 = np.load("../data/band1.npy")
     band2 = np.load("../data/band2.npy")
     b1,b2 = shiftSelec(band1,band2,axis0,axis1)
     r = 25
