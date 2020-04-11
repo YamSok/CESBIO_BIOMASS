@@ -18,7 +18,6 @@ def main(axis0,axis1,bs,f,seuil):
     else :
         # nb = (f*(n // bs) - (f-1)) * (f*(m // bs) - (f-1)) # Nombre de blocs dans l'image
         nb = (n//bs + f * (n-bs)//bs) * (m//bs + f * (m-bs)//bs)
-        print(nb)
     nd = nb // size # Nombre de blocs à traiter par process
     start =  rank * nd + rank * ((rank - 1) < (nb % size)) + (rank)*((rank - 1) >= (nb % size))
     end = (rank + 1) * nd + (rank + 1) * ((rank - 1) < (nb % size)) + (rank + 1)*((rank - 1) >= (nb % size))
