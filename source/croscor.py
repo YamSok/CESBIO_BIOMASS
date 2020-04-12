@@ -133,8 +133,8 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
     tabx=[] # stockage décalage x
     taby=[] # stockage décalage y
     count = 0 # compte des blocs corrects
-    ncol = m//bs + f * (m-bs)//bs - 1
-    nrow = n//bs + f * (n-bs)//bs - 1
+    nrow = (m//bs + (m - bs//f)//bs)
+    ncol = (n//bs + (n - bs//f)//bs)
     for i in range(nrow): # Parcours des blocs superposés (incertain)
         for j in range(ncol):
             if i * ncol + j  >= start and i * ncol + j < end: # Vérification que le processus doit bien traiter ce bloc
@@ -196,8 +196,8 @@ def visualizeSuperpose(ff,tab): # file features
     ax[0].imshow(b2)
     ax[1].imshow(b1)
     count = 0
-    ncol = m//bs + f * (m-bs)//bs - 1
-    nrow = n//bs + f * (n-bs)//bs - 1
+    nrow = (m//bs + (m - bs//f)//bs)
+    ncol = (n//bs + (n - bs//f)//bs)
     for i in range(nrow) :
         for j in range(ncol) :
 
