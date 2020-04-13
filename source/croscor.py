@@ -195,8 +195,8 @@ def visualizeSuperpose(ff,tab): # file features
     ax[0].imshow(b2)
     ax[1].imshow(b1)
     count = 0
-    ncol = m // (bs/f) - (f - 1)
-    nrow = n // (bs/f) - (f - 1)
+    ncol = int(m // (bs/f) - (f - 1))
+    nrow = int(n // (bs/f) - (f - 1))
     nb = nrow * ncol      # Nombre de blocs dans l'image
     for i in range(nrow) :
         for j in range(ncol) :
