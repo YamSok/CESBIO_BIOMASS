@@ -61,16 +61,17 @@ rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
 size = mpi.COMM_WORLD.Get_size() # Nombre de process"
 
 if rank == 0:
-    axis0 = 15 #input("Axis 0 : ")
-    axis1 = 15 #input("Axis 1 : ")
+    # axis0 = 15 #input("Axis 0 : ")
+    # axis1 = 15 #input("Axis 1 : ")
     seuil = 10
     # bs = 128
-    print()
-    print("##############################")
+    print("\n##############################")
     print("##############################")
     print('')
     f = int(input("Entrez le facteur de recouvrement : "))
     bs = int(input("Entrez le block size : "))
+    axis0 = int(input("Entrez le shift de la band1 sur l'axis0 (vertical)"))
+    axis1 = int(input("Entrez le shift de la band1 sur l'axis1 (horizontal)"))
 
     data = [axis0, axis1, seuil, bs, f]
     t0 = time.time()
