@@ -109,13 +109,18 @@ def main(img): #img est l'image corrigée - rapport band2/band1-corrigee
     sortedData = sortBiomInt(BiomassData,IntensityData)
     print(sortedData)
     print("---------------------------------------------")
+
+    plt.figure(1)
     plt.scatter(sortedData[:,0],sortedData[:,1])
-    plt.savefig("plotMaternelle.png")
+    plt.title("Intensité image en fonction de la biomasse sur 16 ROI de forêt")
+    plt.xlabel("Qté de biomasse de 16 parcelles (Ordre croissant de qté)")
+    plt.ylabel("Intensité image parcelle")
+    plt.savefig("../results/plotMaternelle.png")
+    plt.show()
 
 ################################################################
 
-img = np.load("../data/band1_new.npy")
-
+img = np.load("../decoup/band1_new.npy")
 main(img)
 
 
