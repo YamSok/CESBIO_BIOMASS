@@ -16,8 +16,8 @@ def main(axis0,axis1,bs,f,seuil):
     if f == 1:
         nb = (n // bs) * (m // bs)
     else :
-        nrow = (m//bs + (m - bs//f)//bs)
-        ncol = (n//bs + (n - bs//f)//bs)
+        ncol = (m//bs + (m - bs//f)//bs)
+        nrow = (n//bs + (n - bs//f)//bs)
         # nb = (f*(n // bs) - (f-1)) * (f*(m // bs) - (f-1)) # Nombre de blocs dans l'image
         nb = nrow * ncol
     nd = nb // size # Nombre de blocs à traiter par process
