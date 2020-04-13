@@ -133,9 +133,9 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
     tabx=[] # stockage décalage x
     taby=[] # stockage décalage y
     count = 0 # compte des blocs corrects
-    nrow = (m//bs + (m - bs//f)//bs)
-    ncol = (n//bs + (n - bs//f)//bs)
-    for i in range(nrow): # Parcours des blocs superposés (incertain)
+    ncol = (m//bs + (m - bs//f)//bs)
+    nrow = (n//bs + (n - bs//f)//bs)
+    for i in range(nrow):
         for j in range(ncol):
             if i * ncol + j  >= start and i * ncol + j < end: # Vérification que le processus doit bien traiter ce bloc
                 band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])  # Selection des blocs sur band 1 et 2
@@ -191,16 +191,15 @@ def visualizeSuperpose(ff,tab): # file features
     b1, b2 = shiftSelec(b1,b2,ax0,ax1)
     r = 25
     n,m = np.shape(b2)
-    nb = (f*(n // bs) - (f-1)) * (f*(m // bs) - (f-1)) # Nombre de blocs dans l'image
     fig,ax = plt.subplots(1,2,figsize=(10,10))
     ax[0].imshow(b2)
     ax[1].imshow(b1)
     count = 0
-    nrow = (m//bs + (m - bs//f)//bs)
-    ncol = (n//bs + (n - bs//f)//bs)
+    ncol = (m//bs + (m - bs//f)//bs)
+    nrow = (n//bs + (n - bs//f)//bs)
+    nb = nrow * ncol      # Nombre de blocs dans l'image
     for i in range(nrow) :
         for j in range(ncol) :
-
             if np.sqrt(tab[0][i * ncol + j]**2 + tab[1][i * ncol + j]**2) == r :
                 c =  'k'
                 l = 1
