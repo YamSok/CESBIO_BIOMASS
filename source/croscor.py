@@ -262,13 +262,22 @@ def choice():
     rez = os.popen('ls -t').read()
     a = rez.split()
     rez2 = [str(i) + ' - ' + a[i] for i in range(len(a)) ]
-    print("Liste des résulats (du plus récent au moins récent)")
+    print("Liste des résulats disponibles \n")
     for i in range(len(a)):
         print(rez2[i])
-
-    cin = input("Entre le numéro résulat à visualiser : ")
-
-    return a[int(cin)]
+    inp = []
+    ok = True
+    print("\n ## Pour mettre fin à la sélection, appuyer sur entré sans entrer de numéro ##\n")
+    while ok:
+        cin = input("Selection : ")
+        if cin == '':
+            ok = False
+        else :
+            print(a[int(cin)])
+            inp.append(cin)
+    tabnames = [a[int(x)] for x in inp]
+    print(tabnames)
+    return tabnames
 
 def ExtractFeatures(filename):
     #test = "256bs_15sx_15sy_25r_15seuil_0count.png"

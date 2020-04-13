@@ -5,7 +5,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-
+import scipy.stats as scpstats
 ################################################################
 # CHARGEMENT DES ROI - PARCELLES
 ################################################################
@@ -96,32 +96,6 @@ def sortBiomInt(BiomassData,IntensityData):
 ################################################################
 #################### PROGRAMME PRINCIPAL #######################
 ################################################################
-
-def main(img): #img est l'image corrigée - rapport band2/band1-corrigee
-    IntensityData = []
-    BiomassData = loadBiomass()
-
-    Parcels = loadParcels()
-    for X in Parcels:
-        IntensityZone_X = IntensityZone(X,img)
-        IntensityData.append(IntensityZone_X[0])
-
-    sortedData = sortBiomInt(BiomassData,IntensityData)
-    print(sortedData)
-    print("---------------------------------------------")
-
-    plt.figure(1)
-    plt.scatter(sortedData[:,0],sortedData[:,1])
-    plt.title("Intensité image en fonction de la biomasse sur 16 ROI de forêt")
-    plt.xlabel("Qté de biomasse de 16 parcelles (Ordre croissant de qté)")
-    plt.ylabel("Intensité image parcelle")
-    plt.savefig("../results/plotMaternelle.png")
-    plt.show()
-
-################################################################
-
-img = np.load("../decoup/band1_new.npy")
-main(img)
 
 
 ################################################################
