@@ -6,33 +6,44 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as scpstats
+from croscor import choiceSimple
 ################################################################
 # CHARGEMENT DES ROI - PARCELLES
 ################################################################
 
+# def loadParcels(num = None):
+#     if num == None: # On charge toutes les parcelles dans une liste
+#         parcels = []
+#         for i in range(1,17):
+#             #parcels.append(np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(i)+ ".dat"))
+#             parcels.append(np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(i)+ ".dat"))
+#         return [x.astype(int) for x in parcels]
+#     else: #  On charge uniquemnent la parcelle numéro "num"
+#         #parcel = np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(num)+ ".dat")
+#         parcel = np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(num)+ ".dat")
+#         return parcel.astype(int)
+
 def loadParcels(num = None):
-    if num == None: # On charge toutes les parcelles dans une liste
-        parcels = []
-        for i in range(1,17):
-            #parcels.append(np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(i)+ ".dat"))
-            parcels.append(np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(i)+ ".dat"))
-        return [x.astype(int) for x in parcels]
-    else: #  On charge uniquemnent la parcelle numéro "num"
-        #parcel = np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(num)+ ".dat")
-        parcel = np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(num)+ ".dat")
-        return parcel.astype(int)
+    filenames = choiceSimple("../data/16ROI/")
+    parcels = []
+    for filename in filenames:
+        parcels.append(np.loadtxt(filename))
+    return [x.astype(int) for x in parcels]
 
 ################################################################
 # CHARGEMENT DES ROI - BIOMASSE
 ################################################################
 
-def loadBiomass(num = None):
-    if num == None :
-        bmssList = np.loadtxt("../data/16insituAGB.dat")
-    else:
-        l = np.loadtxt("../data/16insituAGB.dat")
-        bmssList = l[num - 1]
-    return bmssList
+# def loadBiomass(num = None):
+#     if num == None :
+#         bmssList = np.loadtxt("../data/16insituAGB.dat")
+#     else:
+#         l = np.loadtxt("../data/16insituAGB.dat")
+#         bmssList = l[num - 1]
+#     return bmssList
+
+def loadBiomass(num = 85):
+    return np.loadtxt("../data/"+ str(num)+"insituAGB.dat")
 
 ################################################################
 # AFFICHAGE DES ROI

@@ -10,7 +10,7 @@ from matplotlib.pyplot import figure
 import matplotlib.patches as patches
 import matplotlib as mpl
 import os
-
+import scipy.stats as scpstats
 
 # def shiftSelec(im1,im2,axis0,axis1):
 #     band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
@@ -65,20 +65,102 @@ def selection(img,coord, output = False):
         plt.show()
     return img[y0:y0+h,x0:x0+w]
 
-def loadParcels(num = None):
 
-    if num == None: # On charge toutes les parcelles dans une liste
-        print("oui")
-        parcels = []
-        for i in range(1,17):
-            parcels.append(np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(i)+ ".dat"))
-        return [x.astype(int) for x in parcels]
-    else: #  On charge uniquemnent la parcelle numéro "num"
-        parcel = np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(num)+ ".dat")
-        return parcel.astype(int)
+################################################################
+# CHARGEMENT DES ROI - PARCELLES
+################################################################
 
-def loadAGB():
-    return np.loadtxt("../data/16insituAGB.dat")
+# def loadParcels(num = None):
+#     if num == None: # On charge toutes les parcelles dans une liste
+#         parcels = []
+#         for i in range(1,17):
+#             #parcels.append(np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(i)+ ".dat"))
+#             parcels.append(np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(i)+ ".dat"))
+#         return [x.astype(int) for x in parcels]
+#     else: #  On charge uniquemnent la parcelle numéro "num"
+#         #parcel = np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(num)+ ".dat")
+#         parcel = np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(num)+ ".dat")
+#         return parcel.astype(int)
+
+def loadParcels(num = 85):
+    filenames = choiceSimple("../data/"+str(num)+"ROI/",all=True)
+    parcels = []
+    for filename in filenames:
+        parcels.append(np.loadtxt("../data/"+str(num)+"ROI/"+filename))
+    return [x.astype(int) for x in parcels]
+
+################################################################
+# CHARGEMENT DES ROI - BIOMASSE
+################################################################
+
+# def loadBiomass(num = None):
+#     if num == None :
+#         bmssList = np.loadtxt("../data/16insituAGB.dat")
+#     else:
+#         l = np.loadtxt("../data/16insituAGB.dat")
+#         bmssList = l[num - 1]
+#     return bmssList
+
+def loadBiomass(num = 85):
+    return np.loadtxt("../data/"+ str(num)+"insituAGB.dat")
+
+################################################################
+# AFFICHAGE DES ROI
+################################################################
+
+def plotParcels(num = None):
+    band2 = np.load("../data/band2.npy")
+    #band2x = 10 * np.log(band2)
+    plt.figure(1)
+    plt.imshow(band2)
+    if num == None :
+        Parcels = loadParcels()
+        for i in range(16):
+            X = Parcels[i]
+            plt.scatter(X[:,0], X[:,1])
+            plt.savefig("parcels.png")
+    else:
+        X = loadParcels(num)
+        print(np.shape(X))
+        plt.scatter(X[:,0], X[:,1])
+        plt.savefig("parcel.png")
+
+################################################################
+# VALEUR DES INTENSITES - IMG RAPPORT BAND2 / BAND1SHIFTEE
+################################################################
+
+def Intensities(band1shiftee,band2):
+    band2corr = band2 / band1shiftee
+    return band2corr
+
+################################################################
+# INTENSITES D'UNE ZONE PARTICULIERE
+################################################################
+
+def IntensityZone(X,img): # programme juste
+    IntTab = []
+    n,m = np.shape(X)
+    for i in range(n):
+        IntTab.append(img[X[i][1],X[i][0]])
+    Intmean = np.mean(np.array(IntTab))
+    return Intmean, IntTab
+
+################################################################
+# TRIAGE DES COUPLES BIOMASSE - INTENSITE
+################################################################
+
+def sortBiomInt(BiomassData,IntensityData):
+    dataList = []
+    finalList = []
+
+    for i in range(len(BiomassData)):
+        dataList.append( ( BiomassData[i] , IntensityData[i] ) )
+    sortedList = sorted(dataList)
+
+    for i in range(len(sortedList)):
+        finalList.append( [ sortedList[i][0] , sortedList[i][1] ] )
+
+    return np.array(finalList)
 
 ################################################################################
 ################################ Calcul ########################################
@@ -256,6 +338,25 @@ def visualizeSuperpose(ff,tab): # file features
 ################################################################################
 ################################ Outils ########################################
 ################################################################################
+
+def choiceSimple(folder = '../decoup',all = False):
+    cwd = os.getcwd()
+    os.chdir(folder)
+    rez = os.popen('ls -t').read()
+    os.chdir(cwd)
+
+    a = rez.split()
+    rez2 = [str(i) + ' - ' + a[i] for i in range(len(a)) ]
+    if all == False :
+        print("Liste des résulats disponibles \n")
+        for i in range(len(a)):
+            print(rez2[i])
+        cin = input("Selection : ")
+        print(a[int(cin)])
+        return a[int(cin)]
+    else :
+        return a
+
 
 def choice():
     os.chdir('../decoup')

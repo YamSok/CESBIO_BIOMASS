@@ -22,7 +22,7 @@ warnings.filterwarnings("ignore")
 from croscor import *
 
 
-c = choice()
+c = choiceSimple()
 ff = ExtractFeatures(c)
 print(ff)
 print(c)
