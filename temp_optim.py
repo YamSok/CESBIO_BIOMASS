@@ -71,3 +71,32 @@ diff = testReco(testData,n,A,0.1,3000,1e-5,x)
 Ce graphe ne nous donne qu'une indication concernant l'influence du nombre de mesure car il y a de l'aléa dans chaque test introduit par la matrice A.
 On peut cependant discener une forte décroissance de l'erreur relative entre 4 et environ 25 mesures. A partir de 50 mesures, le gain en erreur n'est plus aussi significatif.
 """
+
+
+"""
+Fonction pour comparer la vitesse de convergence des deux versions de l'algorithme
+ Plot la fonction de coût (une fois normalement, une fois en échelle log) en fonction du nombre d'itérations
+ """
+def compareSpeed(nitermax):
+    sigma = 0.1
+    (alpha0, x0, CF0,err0) = Nesterov(A,y,sigma,nitermax, 1e-16)
+    (alpha1, x1, CF1,err1) = RestoreX(A,y,sigma,nitermax, 1e-16)
+    fig,ax = plt.subplots(1,2, figsize=(18,5))
+    ax[0].plot(CF0[2:],  label='Nesterov')
+    ax[0].plot(CF1[2:],  label='Pas nesterov')
+    ax[0].set_title("Fonction de coût en fonction du nombre d'itérations ")
+    ax[0].set_xlabel("Itération")
+    ax[0].set_ylabel("Fonction de coût")
+    ax[0].legend()
+
+
+    nit = len(err0)
+    ax[1].plot(CF0[2:], label="Nesterov")
+    ax[1].plot(CF1[2:], label="RestoreX")
+    ax[1].set_title("Fonction de coût (log) en fonction du nombre d'itérations ")
+    ax[1].set_xlabel("Itération")
+    ax[1].set_ylabel("Fonction de coût (log)")
+    ax[1].legend()
+    ax[1].set_yscale("log")
+
+compareSpeed(3000)
