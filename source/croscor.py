@@ -38,7 +38,7 @@ import scipy.stats as scpstats
 
 def shiftSelec(im1,im2,axis0,axis1):
     #band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
-    band1_s = np.roll(np.roll(im1,- axis0,axis=0),- axis1,axis=1)
+    band1_s = np.roll(np.roll(im1,axis0,axis=0),axis1,axis=1)
     #b2 = selection(band2_s,115,1651,30,1054)
     margin = 64
     (x0,x1,y0,y1) = (30 + 2 * 256 - margin, 1054 + margin, 215 + 3 * 256, 1751 + margin)
@@ -143,7 +143,7 @@ def IntensityZone(X,img): # programme juste
     for i in range(n):
         IntTab.append(img[X[i][1],X[i][0]])
     Intmean = np.mean(np.array(IntTab))
-    return Intmean, IntTab
+    return 10*np.log(Intmean), IntTab
 
 ################################################################
 # TRIAGE DES COUPLES BIOMASSE - INTENSITE
@@ -235,23 +235,24 @@ def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
 
 # DONNE LE NOMBRE DE BLOCS AVEC DECALGE < SEUIL
 def countCorrect(tab,seuil, verbose=False):
-    count = 0
     dist = []
     for i in range(len(tab[0])):
         distance = np.sqrt(tab[0][i]**2 + tab[1][i]**2)
         if verbose :
-            print("Décalage du block " +str(i)+ " : %.2f" % (np.sqrt(tab[0][i]**2 + tab[1][i]**2)*5) + " m.")
+            print("Décalage du block " +str(i)+ " : %.2f" % (np.sqrt(tab[0][i]**2 + tab[1][i]**2)) + " m.")
         if distance < seuil:  #distance inférieure à 50 px (c'est beaucoup)
-            count +=1
-        dist.append(distance)
+            dist.append(distance)
     # if verbose:
     #     print(str(count)+" corrects sur "+ str(nb) + " avec une marge de " + str(seuil * 5) +" m.")
-    print("\n \n")
-    print("Moyenne des déplacements : " + str(np.mean(distance * 5)))
-    print("Moyenne des en x : " + str(np.mean(tab[0] * 5)))
-    print("Moyenne des en y : " + str(np.mean(tab[1] * 5)))
+    dist = np.mean(distance)
+    xdist = np.mean(tab[0])
+    ydist = np.mean(tab[1])
+    # print("\n")
+    print("Moyenne des déplacements : " + str(dist))
+    print("Moyenne des en x : " + str(xdist))
+    print("Moyenne des en y : " + str(ydist))
 
-    return count, np.mean(distance*5)
+    return dist, xdist, ydist
 
 
 ################################################################################
@@ -339,7 +340,7 @@ def visualizeSuperpose(ff,tab): # file features
 ################################ Outils ########################################
 ################################################################################
 
-def choiceSimple(folder = '../decoup',all = False):
+def choiceSimple(folder = '../decoup',all = False,first = False):
     cwd = os.getcwd()
     os.chdir(folder)
     rez = os.popen('ls -t').read()
@@ -347,14 +348,16 @@ def choiceSimple(folder = '../decoup',all = False):
 
     a = rez.split()
     rez2 = [str(i) + ' - ' + a[i] for i in range(len(a)) ]
-    if all == False :
+    if all == False and first == False :
         print("Liste des résulats disponibles \n")
         for i in range(len(a)):
             print(rez2[i])
         cin = input("Selection : ")
         print(a[int(cin)])
         return a[int(cin)]
-    else :
+    elif first == True :
+        return a[0]
+    else:
         return a
 
 

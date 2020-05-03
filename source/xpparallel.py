@@ -4,6 +4,7 @@ from croscor import *
 import time
 import warnings
 warnings.filterwarnings("ignore")
+import sys
 
 # PROGRAMME PRINCIPAL
 def main(axis0,axis1,bs,f,seuil):
@@ -51,14 +52,14 @@ def main(axis0,axis1,bs,f,seuil):
             for i in range(len(tabx[k])):
                 tab[0][k * len(tabx[0]) + i] = tabx[k][i]
                 tab[1][k * len(taby[0]) + i] = taby[k][i]
-
-        np.save("../decoup/" + str(f) + "f_" + str(bs) + "bs" + "_"+str(axis0) + "sx_" + str(axis1) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu.npy", tab)  # Enregistrement des résultats pour visualisation
+        filename = "../decoup/" + str(f) + "f_" + str(bs) + "bs" + "_"+str(axis0) + "sx_" + str(axis1) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu.npy"
+        np.save(filename, tab)  # Enregistrement des résultats pour visualisation
         #tab = np.load("../decoup/tab_superpose2.npy")  # Chargement des résultats pour visualisation
     #     #visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil) # Ligne à décommenter si visualisation directe des résultats
 
 
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
-size = mpi.COMM_WORLD.Get_size() # Nombre de process"
+size = mpi.COMM_WORLD.Get_size() # Nombre de process
 
 if rank == 0:
     # axis0 = 15 #input("Axis 0 : ")
@@ -68,11 +69,14 @@ if rank == 0:
     print("\n##############################")
     print("##############################")
     print('')
-    f = int(input("Entrez le facteur de recouvrement : "))
-    bs = int(input("Entrez le block size : "))
-    axis0 = int(input("Entrez le shift de la band1 sur l'axis0 (vertical)"))
-    axis1 = int(input("Entrez le shift de la band1 sur l'axis1 (horizontal)"))
-
+    # f = int(input("Entrez le facteur de recouvrement : "))
+    # bs = int(input("Entrez le block size : "))
+    f = 2
+    bs = 256
+    # axis0 = int(input("Entrez le shift de la band1 sur l'axis0 (vertical)"))
+    # axis1 = int(input("Entrez le shift de la band1 sur l'axis1 (horizontal)"))
+    axis0 = int(sys.argv[1])
+    axis1 = int(sys.argv[2])
     data = [axis0, axis1, seuil, bs, f]
     t0 = time.time()
 else:
@@ -81,6 +85,7 @@ else:
 mpi.COMM_WORLD.barrier()
 data = mpi.COMM_WORLD.bcast(data, root=0)
 axis0, axis1, seuil, bs, f = data
+print(axis0,axis1)
 main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
