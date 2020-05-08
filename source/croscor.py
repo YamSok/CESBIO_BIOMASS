@@ -48,6 +48,11 @@ def shiftSelec(im1,im2,axis0,axis1):
     b1 = selection(band1_s,coord)
     return b1,b2
 
+
+"""
+* Retourne l'image donnée en argument crop selon les coordonnées données en argument
+* Plot les ROI si output = True 
+"""
 def selection(img,coord, output = False):
     (x0,x1,y0,y1) = coord
     w = abs(x0 - x1)
@@ -72,6 +77,9 @@ def selection(img,coord, output = False):
 # CHARGEMENT DES ROI - PARCELLES
 ################################################################
 
+"""
+Ancienne version, pour être sûr que l'import se passe bien 
+"""
 # def loadParcels(num = None):
 #     if num == None: # On charge toutes les parcelles dans une liste
 #         parcels = []
@@ -84,6 +92,9 @@ def selection(img,coord, output = False):
 #         parcel = np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(num)+ ".dat")
 #         return parcel.astype(int)
 
+"""
+Version plus simple
+"""
 def loadParcels(num = 16):
     filenames = choiceSimple("../data/"+str(num)+"ROI/",all=True)
     parcels = []
@@ -95,6 +106,9 @@ def loadParcels(num = 16):
 # CHARGEMENT DES ROI - BIOMASSE
 ################################################################
 
+"""
+Ancienne version, pour être sûr que l'import se passe bien 
+"""
 # def loadBiomass(num = None):
 #     if num == None :
 #         bmssList = np.loadtxt("../data/16insituAGB.dat")
@@ -103,6 +117,9 @@ def loadParcels(num = 16):
 #         bmssList = l[num - 1]
 #     return bmssList
 
+"""
+Version plus simple
+"""
 def loadBiomass(num = 85):
     return np.loadtxt("../data/"+ str(num)+"insituAGB.dat")
 
@@ -110,6 +127,9 @@ def loadBiomass(num = 85):
 # AFFICHAGE DES ROI
 ################################################################
 
+"""
+Fonction standalone pour plot les ROI sur band 2
+"""
 def plotParcels(num = None):
     band2 = np.load("../data/band2.npy")
     #band2x = 10 * np.log(band2)
@@ -139,7 +159,12 @@ def Intensities(band1shiftee,band2):
 # INTENSITES D'UNE ZONE PARTICULIERE
 ################################################################
 
-def IntensityZone(X,img): # programme juste
+"""
+POTENTIELLE SOURCE D'ERREUR
+Après test, retourner Intmean ou 10 * np.log(Intmean) ne change pas le résultat
+"""
+
+def IntensityZone(X,img): 
     IntTab = []
     n,m = np.shape(X)
     for i in range(n):
@@ -151,6 +176,9 @@ def IntensityZone(X,img): # programme juste
 # TRIAGE DES COUPLES BIOMASSE - INTENSITE
 ################################################################
 
+"""
+Correspondance entre valeurs de biomasse in situ et valeurs d'intensités
+"""
 def sortBiomInt(BiomassData,IntensityData):
     dataList = []
     finalList = []
@@ -170,10 +198,11 @@ def sortBiomInt(BiomassData,IntensityData):
 
 # CALCUL DE LA CORRELATION CROISEE ENTRE original ET template
 def decalageBloc(original, template):
-    r = 15
+    r = 15 # Seuil maximum qu'on autorise pour le calcul du maximum de corrélation
     orig = np.copy(original)  #prévenir pbs de pointeurs python
     temp = np.copy(template)
 
+    # Normalisation des données
     orig -= original.mean()
     orig = orig/np.std(orig)
     temp -= template.mean()
@@ -204,7 +233,7 @@ def decoupageSuperposeOld(b2,b1,bs,r,f,start,end): # f = factor
                 band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
                 templateBlock = np.copy(band1Block[10:bs-10,10:bs-10])  # Selection du sous bloc
                 orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock) # Calcul du déplacement
-                xm = x-bs/2
+                xm = x-bs/2 # Normalisation
                 ym = y-bs/2
                 tabx.append(xm)
                 taby.append(ym)
@@ -212,7 +241,7 @@ def decoupageSuperposeOld(b2,b1,bs,r,f,start,end): # f = factor
                     count += 1
     return tabx,taby,count
 
-def decoupageSuperpose(b2,b1,bs,r,f,start,end): # f = factor
+def decoupageSuperpose(b2,b1,bs,f,start,end): # f = facteur de recouvrement
     n,m = np.shape(b2)
     # VARIABLES
     tabx=[] # stockage décalage x
@@ -260,8 +289,11 @@ def countCorrect(tab,seuil, verbose=False):
 ################################################################################
 ################################ Affichage #####################################
 ################################################################################
+"""
+Fonction qui permet de visualiser un champ de vecteur déjà calculé sur band1
+"""
 
-def visualizeSuperpose(ff,tab): # file features
+def visualizeSuperpose(ff,tab): # ff = file features, tab = tableau des déplacement (x,y)
 #    if f == None:
 #        bs = input("Block size ? :")
 #        axis0 = input("Décalage selon l'axe 0 :")
@@ -342,6 +374,10 @@ def visualizeSuperpose(ff,tab): # file features
 ################################ Outils ########################################
 ################################################################################
 
+"""
+Fonction permettant de selectionner le nom d'un fichier présent dans le dossier "folder"
+"""
+
 def choiceSimple(folder = '../decoup',all = False,first = False):
     cwd = os.getcwd()
     os.chdir(folder)
@@ -362,6 +398,9 @@ def choiceSimple(folder = '../decoup',all = False,first = False):
     else:
         return a
 
+"""
+Ancienne fonction
+"""
 
 def choice():
     os.chdir('../decoup')
@@ -385,6 +424,9 @@ def choice():
     print(tabnames)
     return tabnames
 
+"""
+Permet de récupérer les attributs d'un test déjà effectué à partir du nom du fichier enregistré
+"""
 def ExtractFeatures(filename):
     #test = "256bs_15sx_15sy_25r_15seuil_0count.png"
     liste = filename.split('_')
@@ -411,6 +453,7 @@ def miseEnBouche(band1,band2):
     plt.tight_layout()
     plt.savefig("../misc/images_radar.png")
     plt.show()
+
 # AFFICHAGE DE 4 SUBPLOTS | ( original, tamplate, cross correlation, zoom de cross correlation )
 def displayImg(original,template,corr,x,y):
     n,m = np.shape(original)

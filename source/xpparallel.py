@@ -11,8 +11,8 @@ def main(axis0,axis1,bs,f,seuil):
     band1 = np.load("../data/band1.npy")
     band2 = np.load("../data/band2.npy")
     b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-    r = 25
-    ### Distribution des blocs sur les processes
+
+    ### Distribution des blocs sur les process
     n,m = np.shape(b2)
     if f == 1:
         nb = (n // bs) * (m // bs)
@@ -31,7 +31,7 @@ def main(axis0,axis1,bs,f,seuil):
     # print("Nombre de blocs à traiter : " + str(nb))
     # print("rank : " + str(rank) + " | start : " + str(start) + " | end : " + str(end))
 
-    tabx,taby,count = decoupageSuperpose(b2,b1,bs,r,f,start,end)
+    tabx,taby,count = decoupageSuperpose(b2,b1,bs,f,start,end)
 
     mpi.COMM_WORLD.barrier()  # Attente de tous les processus
 
@@ -42,10 +42,10 @@ def main(axis0,axis1,bs,f,seuil):
     taby = mpi.COMM_WORLD.allgather(taby)
 
     # Correction du format renvoyé par la fonction allgather
-    # Passage de 2 matrice à  1 matrice ()
-    # # Utile pour
+    # Passage de 2 liste à 1 matrice avec 2 lignes
+
     if rank == 0:
-        accu = int(c / nb * 100)
+        accu = int(c / nb * 100)  # calcul de l'accuracy avec le nombre de blocs corrects
         print(str(c)+" blocs corrects/ "+str(nb) + " | " + str(accu) + "% de précision")
         tab = np.zeros((2,nb))
         for k in range(size):
@@ -53,22 +53,27 @@ def main(axis0,axis1,bs,f,seuil):
                 tab[0][k * len(tabx[0]) + i] = tabx[k][i]
                 tab[1][k * len(taby[0]) + i] = taby[k][i]
         filename = "../decoup/" + str(f) + "f_" + str(bs) + "bs" + "_"+str(axis0) + "sx_" + str(axis1) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu.npy"
-        np.save(filename, tab)  # Enregistrement des résultats pour visualisation
-        #tab = np.load("../decoup/tab_superpose2.npy")  # Chargement des résultats pour visualisation
-    #     #visualizeSuperpose(b1,b2,tab,bs,axis0,axis1,r,f,seuil) # Ligne à décommenter si visualisation directe des résultats
+        np.save(filename, tab)  # Enregistrement des résultats pour post traitement (visualisation et correction des données pour calcul du coef de Pearson)
+
+###################             ###################
+################### END OF MAIN ###################
 
 
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
 size = mpi.COMM_WORLD.Get_size() # Nombre de process
+
+"""
+Programme actuellement en mode automatique 
+Convergence vers la configuration produisant le plus petit déplacement moyen
+entre band2 et band1
+"""
 
 if rank == 0:
     # axis0 = 15 #input("Axis 0 : ")
     # axis1 = 15 #input("Axis 1 : ")
     seuil = 10
     # bs = 128
-    print("\n##############################")
-    print("##############################")
-    print('')
+    print("Processing ...")
     # f = int(input("Entrez le facteur de recouvrement : "))
     # bs = int(input("Entrez le block size : "))
     f = 2
@@ -85,7 +90,6 @@ else:
 mpi.COMM_WORLD.barrier()
 data = mpi.COMM_WORLD.bcast(data, root=0)
 axis0, axis1, seuil, bs, f = data
-print(axis0,axis1)
 main(axis0,axis1,bs,f,seuil)
 mpi.COMM_WORLD.barrier()
 
