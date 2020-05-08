@@ -62,6 +62,8 @@ def selection(img,coord, output = False):
         rect = patches.Rectangle((x0,y0),w,h,linewidth=2,edgecolor='r',facecolor='none')
         ax.imshow(10*np.log(img),vmin=-40,vmax=0)
         ax.add_patch(rect)
+        plt.tight_layout()
+        plt.savefig("../misc/roi")
         plt.show()
     return img[y0:y0+h,x0:x0+w]
 
@@ -82,7 +84,7 @@ def selection(img,coord, output = False):
 #         parcel = np.loadtxt("../data/16ROI/indcsROI_PAR" +"{:02d}".format(num)+ ".dat")
 #         return parcel.astype(int)
 
-def loadParcels(num = 85):
+def loadParcels(num = 16):
     filenames = choiceSimple("../data/"+str(num)+"ROI/",all=True)
     parcels = []
     for filename in filenames:
@@ -402,12 +404,12 @@ def miseEnBouche(band1,band2):
     ax[0].set_title("BAND 1 - Relevé topographique ")
     fig.colorbar(im1,ax=ax[0])
 
-    im2 = ax[1].imshow(10*np.log(band2/band1),vmin=-40,vmax=0)
+    im2 = ax[1].imshow(10*np.log(band2),vmin=-40,vmax=0)
     ax[1].set_title("BAND 2 - Image aéroportée")
     fig.colorbar(im2,ax=ax[1])
 
     plt.tight_layout()
-    #plt.savefig("images_radar.png")
+    plt.savefig("../misc/images_radar.png")
     plt.show()
 # AFFICHAGE DE 4 SUBPLOTS | ( original, tamplate, cross correlation, zoom de cross correlation )
 def displayImg(original,template,corr,x,y):
