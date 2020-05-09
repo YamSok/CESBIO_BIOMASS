@@ -10,7 +10,7 @@ Les erreurs topographiques sont liées au choix de la fréquence du radar. Cette
 Le facteur de correction est calculé à l'aide des modèles numériques de surface (MNS) issues des missions SRTM et TDX)
 
 Pour superposer les images on propose d'utiliser deux méthodes principales : 
-- convolution, fourier, correlation croisée
+- Normalized Cross Correlation (NCC)
 - Recalage par algorithme de gradient 
 
 ## Ressources utiles
