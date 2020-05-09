@@ -170,7 +170,8 @@ def IntensityZone(X,img):
     for i in range(n):
         IntTab.append(img[X[i][1],X[i][0]])
     Intmean = np.mean(np.array(IntTab))
-    return Intmean, IntTab
+    #print(IntTab)
+    return 10*np.log(Intmean), IntTab
 
 ################################################################
 # TRIAGE DES COUPLES BIOMASSE - INTENSITE
