@@ -10,7 +10,7 @@ import sys
 def main(axis0,axis1,bs,f,seuil):
     band1 = np.load("../data/band1.npy")
     band2 = np.load("../data/band2.npy")
-    b1,b2 = shiftSelec(band1,band2,axis0,axis1)
+    b1,b2 = shiftSelec2(band1,band2,axis0,axis1)
 
     ### Distribution des blocs sur les process
     n,m = np.shape(b2)
@@ -77,7 +77,7 @@ if rank == 0:
     # f = int(input("Entrez le facteur de recouvrement : "))
     # bs = int(input("Entrez le block size : "))
     f = 2
-    bs = 256
+    bs = 128
     # axis0 = int(input("Entrez le shift de la band1 sur l'axis0 (vertical)"))
     # axis1 = int(input("Entrez le shift de la band1 sur l'axis1 (horizontal)"))
     axis0 = int(sys.argv[1])

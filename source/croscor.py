@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.linalg as npl
 from scipy import signal
 from scipy import misc
 import matplotlib.pyplot as plt
@@ -49,6 +50,20 @@ def shiftSelec(im1,im2,axis0,axis1):
     return b1,b2
 
 
+def shiftSelec2(im1,im2,axis0,axis1): # Pour nouvelle résolution
+    #band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
+    band1_s = np.roll(np.roll(im1,axis0,axis=0),axis1,axis=1)
+    #b2 = selection(band2_s,115,1651,30,1054)
+    margin = 0
+    (x0, x1, y0, y1) = (200, 520, 480, 864)
+    #(x0,x1,y0,y1) = (30 + 2 * 128 - margin, 1054 + margin, 215 + 3 * 256, 1751 + margin)
+    #(x0,x1,y0,y1) = (30 + 2 * 256, 1054, 215 + 3 * 256, 1751)
+    coord = (x0,x1,y0,y1)
+    b2 = selection(im2,coord)
+    b1 = selection(band1_s,coord)
+    return b1,b2
+
+
 """
 * Retourne l'image donnée en argument crop selon les coordonnées données en argument
 * Plot les ROI si output = True 
@@ -60,12 +75,22 @@ def selection(img,coord, output = False):
     if output:
         fig, ax = plt.subplots(figsize=(10,15))
         parcels = loadParcels()
+        #bms = loadBiomass(16)
         for i in range(len(parcels)):
             x = [p[0] for p in parcels[i]]
             y = [p[1] for p in parcels[i]]
-            plt.scatter(x,y, 0.1)
-        rect = patches.Rectangle((x0,y0),w,h,linewidth=2,edgecolor='r',facecolor='none')
+            if i == 0:
+                plt.scatter(x,y, 0.1, color="black")
+            else :
+                plt.scatter(x,y, 0.1)
+        #arrow = patches.Arrow(0,1369,1000,0,edgecolor='r')
+        #arrow2 = patches.Arrow(662,0,0,1800,edgecolor='r')
+
+        rect = patches.Rectangle((x0,y0),w,h,linewidth=3,edgecolor='r',facecolor='none')
         ax.imshow(10*np.log(img),vmin=-40,vmax=0)
+        #ax.add_patch(arrow)
+        #ax.add_patch(arrow2)
+
         ax.add_patch(rect)
         plt.tight_layout()
         plt.savefig("../misc/roi")
@@ -171,7 +196,7 @@ def IntensityZone(X,img):
         IntTab.append(img[X[i][1],X[i][0]])
     Intmean = np.mean(np.array(IntTab))
     #print(IntTab)
-    return 10*np.log(Intmean), IntTab
+    return 10*np.log10(Intmean), IntTab
 
 ################################################################
 # TRIAGE DES COUPLES BIOMASSE - INTENSITE
@@ -199,7 +224,7 @@ def sortBiomInt(BiomassData,IntensityData):
 
 # CALCUL DE LA CORRELATION CROISEE ENTRE original ET template
 def decalageBloc(original, template):
-    r = 15 # Seuil maximum qu'on autorise pour le calcul du maximum de corrélation
+    r = 10 # Seuil maximum qu'on autorise pour le calcul du maximum de corrélation
     orig = np.copy(original)  #prévenir pbs de pointeurs python
     temp = np.copy(template)
 
@@ -308,37 +333,40 @@ def visualizeSuperpose(ff,tab): # ff = file features, tab = tableau des déplace
     b1 = np.load("../data/band1.npy")
     b2 = np.load("../data/band2.npy")
     b1, b2 = shiftSelec(b1,b2,ax0,ax1)
-    r = 25
+    r = 15
     n,m = np.shape(b2)
-    fig,ax = plt.subplots(1,2,figsize=(10,10))
-    ax[0].imshow(b2)
-    ax[1].imshow(b1)
+    fig,ax = plt.subplots(1,1,figsize=(10,10))
+    ax.imshow(b1)
+    # ax[1].imshow(b1)
     count = 0
     ncol = int(m // (bs/f) - (f - 1))
     nrow = int(n // (bs/f) - (f - 1))
     nb = nrow * ncol      # Nombre de blocs dans l'image
     for i in range(nrow) :
         for j in range(ncol) :
-            if np.sqrt(tab[0][i * ncol + j]**2 + tab[1][i * ncol + j]**2) == r :
+            # dist = np.sqrt(tab[0][i * ncol + j]**2 + tab[1][i * ncol + j]**2)
+            dist = npl.norm([tab[0][i * ncol + j],tab[1][i * ncol + j]],np.inf)
+            if dist == r :
+
                 c =  'k'
                 l = 1
 
                 plt.plot(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2), color = c, marker = '.')
 
                 arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * ncol + j],tab[1][i * ncol + j], width=0.1,edgecolor=c,facecolor='none')
-                ax[1].add_patch(arrow)
+                ax.add_patch(arrow)
 
                 # Q1 = ax[1].quiver(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], angles='xy', color = c, units='width')#, headlength = 0.1, headwidth = 0.1)
                 # qk = ax[1].quiverkey(Q1, 0.9, 0.9, 2, r'$2 \frac{m}{s}$', labelpos='E',
                 #    coordinates='figure')
 
-            elif np.sqrt(tab[0][i * ncol + j]**2 + tab[1][i * ncol + j]**2)  <= seuil:
+            elif dist  <= seuil:
                 c = 'w'
                 l = 1
                 count +=1
 
                 arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * ncol + j],tab[1][i * ncol + j], width=0.1,edgecolor=c,facecolor='none')
-                ax[1].add_patch(arrow)
+                ax.add_patch(arrow)
 
                 # Q2 = ax[1].quiver(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], angles='xy',  color = c, units='width')#, headlength = 0.1, headwidth = 0.1)
                 # qk = ax[1].quiverkey(Q2, 0.9, 0.9, 2, r'$2 \frac{m}{s}$', labelpos='E',
@@ -348,7 +376,7 @@ def visualizeSuperpose(ff,tab): # ff = file features, tab = tableau des déplace
                 l = 1
 
                 arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * ncol + j],tab[1][i * ncol + j], width=0.1,edgecolor=c,facecolor='none')
-                ax[1].add_patch(arrow)
+                ax.add_patch(arrow)
                 #plt.scatter(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2), color = c, )
 
 

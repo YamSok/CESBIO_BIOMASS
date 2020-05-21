@@ -17,7 +17,7 @@ from matplotlib.ticker import MultipleLocator
 import time as t
 ####
 # #
-filepath = r"../data/img_tif.tif"
+filepath = r"../data/img_tif_low.tif"
 raster = rasterio.open(filepath)
 #
 # #show((raster, 1), cmap='Reds')
@@ -27,8 +27,8 @@ raster = rasterio.open(filepath)
 #
 band1 = raster.read(1)
 band2 = raster.read(2)
-np.save("../data/band1.npy",band1)
-np.save("../data/band2.npy",band2)
+np.save("../data/band1_low.npy",band1)
+np.save("../data/band2_low.npy",band2)
 #band1 = np.loadtxt("band1.txt")
 # t0 = t.time()
 # band2x = np.loadtxt("../data/band2.txt")
