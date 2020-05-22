@@ -10,11 +10,12 @@ distance = 2 * seuil
 k = 0
 while distance > seuil:
     command = f"mpiexec -n 4 python xpparallel.py {axis0} {axis1}"
-    print(f"Itération {k} : axis0 = {axis0} | axis1 = {axis1}")
+    print(f"\nItération {k} : axis0 = {axis0} | axis1 = {axis1}")
     os.system(command)
     c = choiceSimple(folder = '../decoup',all = False,first = True)
     tab = np.load("../decoup/" + c)
     distance, xdist, ydist = countCorrect(tab,seuil, verbose=False)
+    # print(f"Mean x-displacement : {xdist} | Mean y-displacement : {ydist}")
     axis0 += int(np.floor(ydist))
     axis1 += int(np.floor(xdist))
     k += 1

@@ -37,7 +37,7 @@ import scipy.stats as scpstats
 #     return img[x0:x0+h,y0:y0+w]
 
 
-def shiftSelec(im1,im2,axis0,axis1):
+def shiftSelec_old(im1,im2,axis0,axis1):
     #band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
     band1_s = np.roll(np.roll(im1,axis0,axis=0),axis1,axis=1)
     #b2 = selection(band2_s,115,1651,30,1054)
@@ -50,7 +50,7 @@ def shiftSelec(im1,im2,axis0,axis1):
     return b1,b2
 
 
-def shiftSelec2(im1,im2,axis0,axis1): # Pour nouvelle résolution
+def shiftSelec(im1,im2,axis0,axis1): # Pour nouvelle résolution
     #band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
     band1_s = np.roll(np.roll(im1,axis0,axis=0),axis1,axis=1)
     #b2 = selection(band2_s,115,1651,30,1054)
@@ -59,7 +59,7 @@ def shiftSelec2(im1,im2,axis0,axis1): # Pour nouvelle résolution
     #(x0,x1,y0,y1) = (30 + 2 * 128 - margin, 1054 + margin, 215 + 3 * 256, 1751 + margin)
     #(x0,x1,y0,y1) = (30 + 2 * 256, 1054, 215 + 3 * 256, 1751)
     coord = (x0,x1,y0,y1)
-    b2 = selection(im2,coord)
+    b2 = selection(10*np.log(im2),coord)
     b1 = selection(band1_s,coord)
     return b1,b2
 
@@ -292,18 +292,18 @@ def decoupageSuperpose(b2,b1,bs,f,start,end): # f = facteur de recouvrement
 
 # DONNE LE NOMBRE DE BLOCS AVEC DECALGE < SEUIL
 def countCorrect(tab,seuil, verbose=False):
-    dist = []
+    
     for i in range(len(tab[0])):
         distance = np.sqrt(tab[0][i]**2 + tab[1][i]**2)
         if verbose :
             print("Décalage du block " +str(i)+ " : %.2f" % (np.sqrt(tab[0][i]**2 + tab[1][i]**2)) + " m.")
-        if distance < seuil:  #distance inférieure à 50 px (c'est beaucoup)
-            dist.append(distance)
+        # if distance < seuil:  #distance inférieure à 50 px (c'est beaucoup)
+        #     dist.append(distance)
     # if verbose:
     #     print(str(count)+" corrects sur "+ str(nb) + " avec une marge de " + str(seuil * 5) +" m.")
-    dist = np.mean(distance)
     xdist = np.mean(tab[0])
     ydist = np.mean(tab[1])
+    dist = np.sqrt(xdist**2 + ydist**2)
     # print("\n")
     print("Moyenne des déplacements : " + str(dist))
     print("Moyenne des en x : " + str(xdist))

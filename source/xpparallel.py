@@ -8,9 +8,11 @@ import sys
 
 # PROGRAMME PRINCIPAL
 def main(axis0,axis1,bs,f,seuil):
-    band1 = np.load("../data/band1.npy")
-    band2 = np.load("../data/band2.npy")
-    b1,b2 = shiftSelec2(band1,band2,axis0,axis1)
+    # band1 = np.load("../data/band1.npy")
+    # band2 = np.load("../data/band2.npy")
+    band1 = np.load('../data/b1_d.npy')
+    band2 = np.load('../data/b2_d.npy')
+    b1,b2 = shiftSelec(band1,band2,axis0,axis1)
 
     ### Distribution des blocs sur les process
     n,m = np.shape(b2)
