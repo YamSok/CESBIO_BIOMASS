@@ -12,6 +12,7 @@ import matplotlib.patches as patches
 import matplotlib as mpl
 import os
 import scipy.stats as scpstats
+mpl.rcParams['figure.dpi'] = 100
 
 # def shiftSelec(im1,im2,axis0,axis1):
 #     band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
@@ -37,7 +38,7 @@ import scipy.stats as scpstats
 #     return img[x0:x0+h,y0:y0+w]
 
 
-def shiftSelec_old(im1,im2,axis0,axis1):
+def shiftSelec(im1,im2,axis0,axis1):
     #band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
     band1_s = np.roll(np.roll(im1,axis0,axis=0),axis1,axis=1)
     #b2 = selection(band2_s,115,1651,30,1054)
@@ -50,7 +51,7 @@ def shiftSelec_old(im1,im2,axis0,axis1):
     return b1,b2
 
 
-def shiftSelec(im1,im2,axis0,axis1): # Pour nouvelle résolution
+def shiftSelec_new(im1,im2,axis0,axis1): # Pour nouvelle résolution
     #band2_s = np.roll(np.roll(im2,axis0,axis=0),axis1,axis=1)
     band1_s = np.roll(np.roll(im1,axis0,axis=0),axis1,axis=1)
     #b2 = selection(band2_s,115,1651,30,1054)
@@ -76,13 +77,13 @@ def selection(img,coord, output = False):
         fig, ax = plt.subplots(figsize=(10,15))
         parcels = loadParcels()
         #bms = loadBiomass(16)
-        for i in range(len(parcels)):
-            x = [p[0] for p in parcels[i]]
-            y = [p[1] for p in parcels[i]]
-            if i == 0:
-                plt.scatter(x,y, 0.1, color="black")
-            else :
-                plt.scatter(x,y, 0.1)
+        # for i in range(len(parcels)):
+        #     x = [p[0] for p in parcels[i]]
+        #     y = [p[1] for p in parcels[i]]
+        #     if i == 0:
+        #         plt.scatter(x,y, 0.1, color="black")
+        #     else :
+        #         plt.scatter(x,y, 0.1)
         #arrow = patches.Arrow(0,1369,1000,0,edgecolor='r')
         #arrow2 = patches.Arrow(662,0,0,1800,edgecolor='r')
 
@@ -93,10 +94,39 @@ def selection(img,coord, output = False):
 
         ax.add_patch(rect)
         plt.tight_layout()
-        plt.savefig("../misc/roi")
+        plt.savefig("../misc/roi_corrected")
         plt.show()
     return img[y0:y0+h,x0:x0+w]
 
+
+def selection2(img,coord, output = False):
+    (x0,x1,y0,y1) = coord
+    w = abs(x0 - x1)
+    h = abs(y0 - y1)
+    if output:
+        fig, ax = plt.subplots(figsize=(10,15))
+        # parcels = loadParcels()
+        # #bms = loadBiomass(16)
+        # for i in range(len(parcels)):
+        #     x = [p[0] for p in parcels[i]]
+        #     y = [p[1] for p in parcels[i]]
+        #     if i == 0:
+        #         plt.scatter(x,y, 0.1, color="black")
+        #     else :
+        #         plt.scatter(x,y, 0.1)
+        #arrow = patches.Arrow(0,1369,1000,0,edgecolor='r')
+        #arrow2 = patches.Arrow(662,0,0,1800,edgecolor='r')
+
+        rect = patches.Rectangle((x0,y0),w,h,linewidth=3,edgecolor='r',facecolor='none')
+        ax.imshow(img,vmin=0,vmax=5)
+        #ax.add_patch(arrow)
+        #ax.add_patch(arrow2)
+
+        ax.add_patch(rect)
+        plt.tight_layout()
+        plt.savefig("../misc/dem")
+        plt.show()
+    return img[y0:y0+h,x0:x0+w]
 
 ################################################################
 # CHARGEMENT DES ROI - PARCELLES
@@ -224,7 +254,7 @@ def sortBiomInt(BiomassData,IntensityData):
 
 # CALCUL DE LA CORRELATION CROISEE ENTRE original ET template
 def decalageBloc(original, template):
-    r = 10 # Seuil maximum qu'on autorise pour le calcul du maximum de corrélation
+    r = 5 # Seuil maximum qu'on autorise pour le calcul du maximum de corrélation
     orig = np.copy(original)  #prévenir pbs de pointeurs python
     temp = np.copy(template)
 
@@ -333,9 +363,9 @@ def visualizeSuperpose(ff,tab): # ff = file features, tab = tableau des déplace
     b1 = np.load("../data/band1.npy")
     b2 = np.load("../data/band2.npy")
     b1, b2 = shiftSelec(b1,b2,ax0,ax1)
-    r = 15
+    r = 7
     n,m = np.shape(b2)
-    fig,ax = plt.subplots(1,1,figsize=(10,10))
+    fig,ax = plt.subplots(1,1,figsize=(10,15))
     ax.imshow(b1)
     # ax[1].imshow(b1)
     count = 0
@@ -365,17 +395,17 @@ def visualizeSuperpose(ff,tab): # ff = file features, tab = tableau des déplace
                 l = 1
                 count +=1
 
-                arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * ncol + j],tab[1][i * ncol + j], width=0.1,edgecolor=c,facecolor='none')
+                arrow = patches.FancyArrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * ncol + j],tab[1][i * ncol + j], width=0.1,head_width=3,head_length=6,edgecolor=c,facecolor='none')
                 ax.add_patch(arrow)
 
                 # Q2 = ax[1].quiver(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * (f * (m//bs) - (f-1)) + j],tab[1][i * (f * (m//bs) - (f-1)) + j], angles='xy',  color = c, units='width')#, headlength = 0.1, headwidth = 0.1)
-                # qk = ax[1].quiverkey(Q2, 0.9, 0.9, 2, r'$2 \frac{m}{s}$', labelpos='E',
+                # qk = ax[1].quiverkey(Q2, 0.9, 0.9, 2, r'$2 mise\frac{m}{s}$', labelpos='E',
                 #    coordinates='figure')
             else:
-                c = 'r'
+                c = 'w'
                 l = 1
 
-                arrow = patches.Arrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * ncol + j],tab[1][i * ncol + j], width=0.1,edgecolor=c,facecolor='none')
+                arrow = patches.FancyArrow( int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2) ,tab[0][i * ncol + j],tab[1][i * ncol + j], width=0.1,head_width=3,head_length=6,edgecolor=c,facecolor='none')
                 ax.add_patch(arrow)
                 #plt.scatter(int((j/f) * bs + bs // 2 ) , int((i/f) *bs + bs // 2), color = c, )
 
@@ -394,10 +424,11 @@ def visualizeSuperpose(ff,tab): # ff = file features, tab = tableau des déplace
             #ax[0].add_patch(rect)
             #ax[1].add_patch(rect2)
     plt.tight_layout()
-
+    
     #plt.savefig("b2")
     # accu = round((count / nb * 100))
     plt.savefig("../results/"+ str(f) + "f_" + str(bs) + "bs_" + str(ax0) + "sx_" + str(ax0) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu.png")
+    plt.show()
 
 ################################################################################
 ################################ Outils ########################################
@@ -587,7 +618,7 @@ def decoupage(band2,band1,bs,i,j,axis0=0,axis1=0,v=False): #bs= blocksize
 
     # DECALAGE "GROSSIER" de BAND 2 par rapport à BAND 1
     b1,b2 = shiftSelec(band1,band2,axis0,axis1)
-    r = 25
+    r = 15
     n,m = np.shape(b2)
 
     fig,ax = plt.subplots(1,2,figsize=(10,10))

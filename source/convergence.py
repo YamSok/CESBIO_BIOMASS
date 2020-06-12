@@ -18,6 +18,7 @@ while distance > seuil:
     # print(f"Mean x-displacement : {xdist} | Mean y-displacement : {ydist}")
     axis0 += int(np.floor(ydist))
     axis1 += int(np.floor(xdist))
+    print(f'ajout de {np.floor(xdist)} en x | ajout de {np.floor(xdist)} en y ')
     k += 1
 
 print(f"Convergence in {k} itération for a threshold of {seuil} px \nBest choices :  axis0 = {axis0} | axis1 = {axis1}")
