@@ -37,7 +37,7 @@ def main(axis0,axis1,bs,f,seuil):
 
     mpi.COMM_WORLD.barrier()  # Attente de tous les processus
 
-    c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM)
+    c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM) # additions des compteurs des blocs corrects de chaque processus
 
     # Regroupement des données calculés par chaque processus
     tabx = mpi.COMM_WORLD.allgather(tabx)

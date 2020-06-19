@@ -3,6 +3,14 @@ import numpy as np
 from croscor import *
 
 
+'''
+Ce qu'il faut faire : 
+    * Itérer tant qu'on touche les bords de la région qu'on s'est fixé
+        * Si accu < seuil (ex : 70%)
+    * Si on touche le bord on integre un petit shift dans la direction moyenne
+    * On itère jusqu'à avoir un vecteur déplacement de norme inférieur au seuil de tolérence
+'''
+
 
 axis0, axis1 = 0,0
 seuil = 3
