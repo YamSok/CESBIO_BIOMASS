@@ -10,9 +10,9 @@ import sys
 def main(axis0,axis1,bs,f,seuil):
     # band1 = np.load("../data/band1.npy")
     # band2 = np.load("../data/band2.npy")
-    band1 = np.load('../data/b1_d.npy')
-    band2 = np.load('../data/b2_d.npy')
-    b1,b2 = shiftSelec(band1,band2,axis0,axis1)
+    b1 = np.load('../data/afri_band1.npy')
+    b2 = np.load('../data/afri_band1.npy')
+    # b1,b2 = shiftSelec(band1,band2,axis0,axis1)
 
     ### Distribution des blocs sur les process
     n,m = np.shape(b2)
@@ -54,7 +54,7 @@ def main(axis0,axis1,bs,f,seuil):
             for i in range(len(tabx[k])):
                 tab[0][k * len(tabx[0]) + i] = tabx[k][i]
                 tab[1][k * len(taby[0]) + i] = taby[k][i]
-        filename = "../decoup/" + str(f) + "f_" + str(bs) + "bs" + "_"+str(axis0) + "sx_" + str(axis1) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu.npy"
+        filename = "../decoup/afri/" + str(f) + "f_" + str(bs) + "bs" + "_"+str(axis0) + "sx_" + str(axis1) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu.npy"
         np.save(filename, tab)  # Enregistrement des résultats pour post traitement (visualisation et correction des données pour calcul du coef de Pearson)
 
 ###################             ###################

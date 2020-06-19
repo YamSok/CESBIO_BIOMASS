@@ -30,3 +30,4 @@ while distance > seuil:
     k += 1
 
 print(f"Convergence in {k} itération for a threshold of {seuil} px \nBest choices :  axis0 = {axis0} | axis1 = {axis1}")
+
