@@ -360,13 +360,14 @@ def visualizeSuperpose(ff,tab): # ff = file features, tab = tableau des déplace
     ax1 = int(ff["ax1"])
     seuil = int(ff["seuil"])
     accu = int(ff["accu"])
-    b1 = np.load("../data/band1.npy")
-    b2 = np.load("../data/band2.npy")
-    b1, b2 = shiftSelec(b1,b2,ax0,ax1)
+    b1 = np.load("../data/afri_band1.npy")
+    b2 = np.load("../data/afri_band2.npy")
+    # b1, b2 = shiftSelec(b1,b2,ax0,ax1)
     r = 7
     n,m = np.shape(b2)
     fig,ax = plt.subplots(1,1,figsize=(10,15))
     ax.imshow(b1)
+    # ax.imshow(b1,vmin=0,vmax=5)
     # ax[1].imshow(b1)
     count = 0
     ncol = int(m // (bs/f) - (f - 1))
@@ -463,7 +464,7 @@ Ancienne fonction
 """
 
 def choice():
-    os.chdir('../decoup')
+    os.chdir('../decoup/afri/')
     rez = os.popen('ls -t').read()
     a = rez.split()
     rez2 = [str(i) + ' - ' + a[i] for i in range(len(a)) ]

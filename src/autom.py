@@ -22,10 +22,10 @@ warnings.filterwarnings("ignore")
 from croscor import *
 
 
-c = choice()
+c = choiceSimple("../decoup/afri/")
 ff = ExtractFeatures(c)
 print(ff)
 print(c)
-tab = np.load('../decoup/afrisar' + c)
+tab = np.load('../decoup/afri/' + c)
 visualizeSuperpose(ff,tab)
 #npy = choice()
