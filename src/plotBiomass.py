@@ -1,15 +1,11 @@
-
-################################################################
-# BIBLIOTHEQUES
-################################################################
+'''
+This library permits to load and visualize biomass regions of interest.
+'''
 
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as scpstats
 from croscor import choiceSimple
-################################################################
-# CHARGEMENT DES ROI - PARCELLES
-################################################################
 
 # def loadParcels(num = None):
 #     if num == None: # On charge toutes les parcelles dans une liste
@@ -24,6 +20,11 @@ from croscor import choiceSimple
 #         return parcel.astype(int)
 
 def loadParcels(num = None):
+
+    '''
+    Loads forest regions of interest from
+    '''
+
     filenames = choiceSimple("../data/16ROI/")
     parcels = []
     for filename in filenames:
@@ -43,13 +44,19 @@ def loadParcels(num = None):
 #     return bmssList
 
 def loadBiomass(num = 85):
+    '''
+    Loads data from regions of interest from the file.
+    '''
     return np.loadtxt("../data/"+ str(num)+"insituAGB.dat")
 
-################################################################
-# AFFICHAGE DES ROI
-################################################################
-
 def plotParcels(num = None):
+
+    '''
+    Displays regions of interest on 'band2' frame.
+    'num' is the number of the region of interest to be displayed.
+    If 'num' is not given, all regions of interest are displayed.
+    '''
+
     band2 = np.load("../data/band2.npy")
     #band2x = 10 * np.log(band2)
     plt.figure(1)
@@ -71,6 +78,9 @@ def plotParcels(num = None):
 ################################################################
 
 def Intensities(band1shiftee,band2):
+    '''
+    Returns image from which biomass can be estimated.
+    '''
     band2corr = band2 / band1shiftee
     return band2corr
 
@@ -78,7 +88,17 @@ def Intensities(band1shiftee,band2):
 # INTENSITES D'UNE ZONE PARTICULIERE
 ################################################################
 
-def IntensityZone(X,img): # programme juste
+def IntensityZone(X,img):
+
+    '''
+    Takes an array of points from a given region of interest and
+    returns mean intensity value associated to this region.
+
+    'X' is a 2D array containing all 'x' and 'y' coordinates from point of the region.
+    'Intmean' is ...
+    'IntTab' is ...
+    '''
+
     IntTab = []
     n,m = np.shape(X)
     for i in range(n):
@@ -86,11 +106,15 @@ def IntensityZone(X,img): # programme juste
     Intmean = np.mean(np.array(IntTab))
     return Intmean, IntTab
 
-################################################################
-# TRIAGE DES COUPLES BIOMASSE - INTENSITE
-################################################################
-
 def sortBiomInt(BiomassData,IntensityData):
+
+    '''
+    Sorts biomass and intensity couples. ???
+
+    'BiomassData' is ...
+    'IntensityData' is ...
+    '''
+
     dataList = []
     finalList = []
 
@@ -102,13 +126,3 @@ def sortBiomInt(BiomassData,IntensityData):
         finalList.append( [ sortedList[i][0] , sortedList[i][1] ] )
 
     return np.array(finalList)
-
-
-################################################################
-#################### PROGRAMME PRINCIPAL #######################
-################################################################
-
-
-################################################################
-#################### PROGRAMME TERMINE #########################
-################################################################

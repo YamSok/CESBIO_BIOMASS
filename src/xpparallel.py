@@ -1,3 +1,7 @@
+'''
+Main program for estimating biomass quantity from satellite and DEM frames.
+'''
+
 import mpi4py.MPI as mpi
 import numpy as np
 from croscor import *
@@ -6,8 +10,12 @@ import warnings
 warnings.filterwarnings("ignore")
 import sys
 
-# PROGRAMME PRINCIPAL
 def main(axis0,axis1,bs,f,seuil):
+
+    '''
+    Loads satellite and DEM frames, and computes the mean shift. Saves the results for post processings.
+    '''
+
     # band1 = np.load("../data/band1.npy")
     # band2 = np.load("../data/band2.npy")
     b1 = np.load('../data/afri_band1.npy')
@@ -39,7 +47,7 @@ def main(axis0,axis1,bs,f,seuil):
 
     c = mpi.COMM_WORLD.allreduce(sendobj = count, op = mpi.SUM) # additions des compteurs des blocs corrects de chaque processus
 
-    # Regroupement des données calculés par chaque processus
+    # Regroupement des données calculées par chaque processus
     tabx = mpi.COMM_WORLD.allgather(tabx)
     taby = mpi.COMM_WORLD.allgather(taby)
 
@@ -57,15 +65,12 @@ def main(axis0,axis1,bs,f,seuil):
         filename = "../decoup/afri/" + str(f) + "f_" + str(bs) + "bs" + "_"+str(axis0) + "sx_" + str(axis1) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu.npy"
         np.save(filename, tab)  # Enregistrement des résultats pour post traitement (visualisation et correction des données pour calcul du coef de Pearson)
 
-###################             ###################
-################### END OF MAIN ###################
-
 
 rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
 size = mpi.COMM_WORLD.Get_size() # Nombre de process
 
 """
-Programme actuellement en mode automatique 
+Programme actuellement en mode automatique
 Convergence vers la configuration produisant le plus petit déplacement moyen
 entre band2 et band1
 """

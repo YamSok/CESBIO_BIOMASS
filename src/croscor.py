@@ -65,11 +65,14 @@ def shiftSelec_new(im1,im2,axis0,axis1): # Pour nouvelle résolution
     return b1,b2
 
 
-"""
-* Retourne l'image donnée en argument crop selon les coordonnées données en argument
-* Plot les ROI si output = True 
-"""
+
 def selection(img,coord, output = False):
+
+    """
+    * Retourne l'image donnée en argument crop selon les coordonnées données en argument
+    * Plot les ROI si output = True
+    """
+
     (x0,x1,y0,y1) = coord
     w = abs(x0 - x1)
     h = abs(y0 - y1)
@@ -133,7 +136,7 @@ def selection2(img,coord, output = False):
 ################################################################
 
 """
-Ancienne version, pour être sûr que l'import se passe bien 
+Ancienne version, pour être sûr que l'import se passe bien
 """
 # def loadParcels(num = None):
 #     if num == None: # On charge toutes les parcelles dans une liste
@@ -162,7 +165,7 @@ def loadParcels(num = 16):
 ################################################################
 
 """
-Ancienne version, pour être sûr que l'import se passe bien 
+Ancienne version, pour être sûr que l'import se passe bien
 """
 # def loadBiomass(num = None):
 #     if num == None :
@@ -219,7 +222,7 @@ POTENTIELLE SOURCE D'ERREUR
 Après test, retourner Intmean ou 10 * np.log(Intmean) ne change pas le résultat
 """
 
-def IntensityZone(X,img): 
+def IntensityZone(X,img):
     IntTab = []
     n,m = np.shape(X)
     for i in range(n):
@@ -322,7 +325,7 @@ def decoupageSuperpose(b2,b1,bs,f,start,end): # f = facteur de recouvrement
 
 # DONNE LE NOMBRE DE BLOCS AVEC DECALGE < SEUIL
 def countCorrect(tab,seuil, verbose=False):
-    
+
     for i in range(len(tab[0])):
         distance = np.sqrt(tab[0][i]**2 + tab[1][i]**2)
         if verbose :
@@ -425,7 +428,7 @@ def visualizeSuperpose(ff,tab): # ff = file features, tab = tableau des déplace
             #ax[0].add_patch(rect)
             #ax[1].add_patch(rect2)
     plt.tight_layout()
-    
+
     #plt.savefig("b2")
     # accu = round((count / nb * 100))
     plt.savefig("../results/"+ str(f) + "f_" + str(bs) + "bs_" + str(ax0) + "sx_" + str(ax0) + "sy_" + str(seuil) + "seuil_" + str(accu) + "accu.png")
