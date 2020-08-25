@@ -256,8 +256,8 @@ def sortBiomInt(BiomassData,IntensityData):
 ################################################################################
 
 # CALCUL DE LA CORRELATION CROISEE ENTRE original ET template
-def decalageBloc(original, template):
-    r = 5 # Seuil maximum qu'on autorise pour le calcul du maximum de corrélation
+def decalageBloc(original, template, padding):
+    p = padding
     orig = np.copy(original)  #prévenir pbs de pointeurs python
     temp = np.copy(template)
 
@@ -269,11 +269,14 @@ def decalageBloc(original, template):
 
     corr = signal.correlate2d(orig, temp, boundary='symm', mode='same')
     n,m = np.shape(corr)
-    nc = n // 2
-    mc = m // 2
-    y, x = np.unravel_index(np.argmax(corr[nc - r:nc + r, mc - r:mc + r]), corr[nc - r:nc + r, mc - r:mc + r].shape)  # find the match
-    y = y + mc - r
-    x = x + nc - r
+    n_middle = n // 2
+    m_middle = m // 2
+
+    # Selection du domaine admissible pour la recherche du déplacement, correpondant au carré de coté 2 x padding
+    corr_admissible = corr[n_middle - p:n_middle + p, m_middle - p:m_middle + p]
+    y, x = np.unravel_index(np.argmax(corr_admissible), corr_admissible.shape)  # find the match (max of correlation)
+    y = y + m_middle - p
+    x = x + n_middle - p
 
     return orig, temp, corr, x, y
 
@@ -284,23 +287,29 @@ def decoupageSuperposeOld(b2,b1,bs,r,f,start,end): # f = factor
     tabx=[] # stockage décalage x
     taby=[] # stockage décalage y
     count = 0 # compte des blocs corrects
+    padding = 10
 
     for i in range(f * (n//bs) - (f-1)): # Parcours des blocs superposés (incertain)
         for j in range(f * (m//bs)- (f-1)):
             if i * (f * (m // bs) - (f-1)) + j  >= start and i * (f * (m // bs) - (f-1)) + j < end: # Vérification que le processus doit bien traiter ce bloc
                 band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])  # Selection des blocs sur band 1 et 2
                 band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
-                templateBlock = np.copy(band1Block[10:bs-10,10:bs-10])  # Selection du sous bloc
-                orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock) # Calcul du déplacement
+                templateBlock = np.copy(band1Block[padding:bs - padding, padding:bs - padding])  # Selection du sous bloc
+                orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock, padding) # Calcul du déplacement
                 xm = x-bs/2 # Normalisation
                 ym = y-bs/2
                 tabx.append(xm)
                 taby.append(ym)
-                if np.sqrt(xm**2 + ym**2) < 10 :
+                # if np.sqrt(xm**2 + ym**2) < 10 :
+                if npl.norm([x,y], np.inf)
                     count += 1
+                
     return tabx,taby,count
 
 def decoupageSuperpose(b2,b1,bs,f,start,end): # f = facteur de recouvrement
+    """
+    Calcul du déplacement pour chaque bloc de l'image, sachant le facteur de recouvrement f
+    """
     n,m = np.shape(b2)
     # VARIABLES
     tabx=[] # stockage décalage x
@@ -313,10 +322,10 @@ def decoupageSuperpose(b2,b1,bs,f,start,end): # f = facteur de recouvrement
             if i * ncol + j  >= start and i * ncol + j < end: # Vérification que le processus doit bien traiter ce bloc
                 band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])  # Selection des blocs sur band 1 et 2
                 band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
-                templateBlock = np.copy(band1Block[10:bs-10,10:bs-10])  # Selection du sous bloc
-                orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock) # Calcul du déplacement
-                xm = x-bs/2
-                ym = y-bs/2
+                templateBlock = np.copy(band1Block[padding:bs - padding, padding:bs - padding])  # Selection du sous bloc
+                orig, temp, corr, x, y = decalageBloc(band2Block, templateBlock, padding) # Calcul du déplacement
+                xm = x - bs / 2
+                ym = y - bs / 2
                 tabx.append(xm)
                 taby.append(ym)
                 if np.sqrt(xm**2 + ym**2) < 10 :
