@@ -281,30 +281,30 @@ def decalageBloc(original, template, padding):
     return orig, temp, corr, x, y
 
 # APPLICATION CORRELATION CROISEE SUR DES BLOCS SUPERPOSES
-def decoupageSuperposeOld(b2,b1,bs,r,f,start,end): # f = factor
-    n,m = np.shape(b2)
-    # VARIABLES
-    tabx=[] # stockage décalage x
-    taby=[] # stockage décalage y
-    count = 0 # compte des blocs corrects
-    padding = 10
+# def decoupageSuperposeOld(b2,b1,bs,r,f,start,end): # f = factor
+#     n,m = np.shape(b2)
+#     # VARIABLES
+#     tabx=[] # stockage décalage x
+#     taby=[] # stockage décalage y
+#     count = 0 # compte des blocs corrects
+#     padding = 10
 
-    for i in range(f * (n//bs) - (f-1)): # Parcours des blocs superposés (incertain)
-        for j in range(f * (m//bs)- (f-1)):
-            if i * (f * (m // bs) - (f-1)) + j  >= start and i * (f * (m // bs) - (f-1)) + j < end: # Vérification que le processus doit bien traiter ce bloc
-                band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])  # Selection des blocs sur band 1 et 2
-                band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
-                templateBlock = np.copy(band1Block[padding:bs - padding, padding:bs - padding])  # Selection du sous bloc
-                orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock, padding) # Calcul du déplacement
-                xm = x-bs/2 # Normalisation
-                ym = y-bs/2
-                tabx.append(xm)
-                taby.append(ym)
-                # if np.sqrt(xm**2 + ym**2) < 10 :
-                if npl.norm([x,y], np.inf)
-                    count += 1
+#     for i in range(f * (n//bs) - (f-1)): # Parcours des blocs superposés (incertain)
+#         for j in range(f * (m//bs)- (f-1)):
+#             if i * (f * (m // bs) - (f-1)) + j  >= start and i * (f * (m // bs) - (f-1)) + j < end: # Vérification que le processus doit bien traiter ce bloc
+#                 band2Block = np.copy(b2[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])  # Selection des blocs sur band 1 et 2
+#                 band1Block = np.copy(b1[int((i / f) * bs) : int((i / f) * bs + bs) , int((j / f) * bs) : int((j / f) * bs + bs)])
+#                 templateBlock = np.copy(band1Block[padding:bs - padding, padding:bs - padding])  # Selection du sous bloc
+#                 orig,temp,corr,x,y = decalageBloc(band2Block,templateBlock, padding) # Calcul du déplacement
+#                 xm = x-bs/2 # Normalisation
+#                 ym = y-bs/2
+#                 tabx.append(xm)
+#                 taby.append(ym)
+#                 # if np.sqrt(xm**2 + ym**2) < 10 :
+#                 if npl.norm([x,y], np.inf)
+#                     count += 1
                 
-    return tabx,taby,count
+#     return tabx,taby,count
 
 def decoupageSuperpose(b2,b1,bs,f,start,end): # f = facteur de recouvrement
     """
@@ -328,7 +328,8 @@ def decoupageSuperpose(b2,b1,bs,f,start,end): # f = facteur de recouvrement
                 ym = y - bs / 2
                 tabx.append(xm)
                 taby.append(ym)
-                if np.sqrt(xm**2 + ym**2) < 10 :
+                # if np.sqrt(xm**2 + ym**2) < 10 :
+                if npl.norm([x,y], np.inf) < 10
                     count += 1
     return tabx,taby,count
 
@@ -336,16 +337,19 @@ def decoupageSuperpose(b2,b1,bs,f,start,end): # f = facteur de recouvrement
 def countCorrect(tab,seuil, verbose=False):
 
     for i in range(len(tab[0])):
-        distance = np.sqrt(tab[0][i]**2 + tab[1][i]**2)
+        # distance = np.sqrt(tab[0][i]**2 + tab[1][i]**2)
+        distance = npl.norm([tab[0][i],tab[1][i]], np.inf)
         if verbose :
-            print("Décalage du block " +str(i)+ " : %.2f" % (np.sqrt(tab[0][i]**2 + tab[1][i]**2)) + " m.")
+            print("Décalage du block " +str(i)+ " : %.2f" % (distance) + " m.")
         # if distance < seuil:  #distance inférieure à 50 px (c'est beaucoup)
         #     dist.append(distance)
     # if verbose:
     #     print(str(count)+" corrects sur "+ str(nb) + " avec une marge de " + str(seuil * 5) +" m.")
     xdist = np.mean(tab[0])
     ydist = np.mean(tab[1])
-    dist = np.sqrt(xdist**2 + ydist**2)
+    dist = npl.norm([xdist,ydist], np.inf)
+
+    # dist = np.sqrt(xdist**2 + ydist**2)
     # print("\n")
     print("Moyenne des déplacements : " + str(dist))
     print("Moyenne des en x : " + str(xdist))
