@@ -12,16 +12,24 @@ Ce qu'il faut faire :
 '''
 
 
+# Images 
+
+band1 = "../data/band1.npy"
+band2 = "../data/band2.npy"
+# band1 = '../data/afri_band1.npy'
+# band2 = '../data/afri_band1.npy'
+
+# Initialisation du décalage
 axis0, axis1 = 0,0
-seuil = 3
+seuil = 3 #px
 distance = 2 * seuil
 k = 0
 while distance > seuil:
-    command = f"mpiexec -n 4 python xpparallel.py {axis0} {axis1}"
+    command = f"mpiexec -n 4 python xpparallel.py {band1} {band2} {axis0} {axis1}"
     print(f"\nItération {k} : axis0 = {axis0} | axis1 = {axis1}")
     os.system(command)
-    c = choiceSimple(folder = '../decoup',all = False,first = True)
-    tab = np.load("../decoup/" + c)
+    c = choiceSimple(folder = '../decoup/afri/',all = False,first = True)
+    tab = np.load("../decoup/afri/" + c)
     distance, xdist, ydist = countCorrect(tab,seuil, verbose=False)
     # print(f"Mean x-displacement : {xdist} | Mean y-displacement : {ydist}")
     axis0 += int(np.floor(ydist))

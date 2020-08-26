@@ -10,16 +10,14 @@ import warnings
 warnings.filterwarnings("ignore")
 import sys
 
-def main(axis0,axis1,bs,f,seuil):
+def main(band1, band2, axis0,axis1,bs,f,seuil):
 
     '''
     Loads satellite and DEM frames, and computes the mean shift. Saves the results for post processings.
     '''
 
-    # band1 = np.load("../data/band1.npy")
-    # band2 = np.load("../data/band2.npy")
-    b1 = np.load('../data/afri_band1.npy')
-    b2 = np.load('../data/afri_band1.npy')
+    b1 = np.load(band1)
+    b2 = np.load(band2)
     # b1,b2 = shiftSelec(band1,band2,axis0,axis1)
 
     ### Distribution des blocs sur les process
@@ -40,6 +38,7 @@ def main(axis0,axis1,bs,f,seuil):
 
     # print("Nombre de blocs à traiter : " + str(nb))
     # print("rank : " + str(rank) + " | start : " + str(start) + " | end : " + str(end))
+
 
     tabx,taby,count = decoupageSuperpose(b2,b1,bs,f,start,end)
 
@@ -66,19 +65,21 @@ def main(axis0,axis1,bs,f,seuil):
         np.save(filename, tab)  # Enregistrement des résultats pour post traitement (visualisation et correction des données pour calcul du coef de Pearson)
 
 
-rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
-size = mpi.COMM_WORLD.Get_size() # Nombre de process
-
 """
 Programme actuellement en mode automatique
 Convergence vers la configuration produisant le plus petit déplacement moyen
-entre band2 et band1
+entre band2 et band1 ----> voir script convergence_test.py
 """
+
+rank = mpi.COMM_WORLD.Get_rank() #  Numéro du process
+size = mpi.COMM_WORLD.Get_size() # Nombre de process
+
+# Bricolage pour récupérer les arguments de lancement du script en calcul parallèle
 
 if rank == 0:
     # axis0 = 15 #input("Axis 0 : ")
     # axis1 = 15 #input("Axis 1 : ")
-    seuil = 10
+    seuil = 10 # Sert à rien ??
     # bs = 128
     print("Processing ...")
     # f = int(input("Entrez le facteur de recouvrement : "))
@@ -87,19 +88,26 @@ if rank == 0:
     bs = 128
     # axis0 = int(input("Entrez le shift de la band1 sur l'axis0 (vertical)"))
     # axis1 = int(input("Entrez le shift de la band1 sur l'axis1 (horizontal)"))
-    axis0 = int(sys.argv[1])
-    axis1 = int(sys.argv[2])
-    data = [axis0, axis1, seuil, bs, f]
+    band1 = sys.argv[1]
+    band2 = sys.argv[2]
+    axis0 = int(sys.argv[3])
+    axis1 = int(sys.argv[4])
+    data = [band1, band2, axis0, axis1, seuil, bs, f]
     t0 = time.time()
 else:
     data = []
 
 mpi.COMM_WORLD.barrier()
 data = mpi.COMM_WORLD.bcast(data, root=0)
-axis0, axis1, seuil, bs, f = data
-main(axis0,axis1,bs,f,seuil)
+band1, band2, axis0, axis1, seuil, bs, f = data
+main(band1, band2, axis0, axis1, bs, f, seuil)
 mpi.COMM_WORLD.barrier()
 
 if rank == 0:
     t1 = time.time()
     print("Temps d'exec : " + str((t1 - t0)//60) + "min" + str("%.2f" % ((t1 - t0)%60)))
+
+
+# Notes : 
+# * Seuil sert à rien (?)
+# * 

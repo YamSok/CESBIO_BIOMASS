@@ -315,6 +315,7 @@ def decoupageSuperpose(b2,b1,bs,f,start,end): # f = facteur de recouvrement
     tabx=[] # stockage décalage x
     taby=[] # stockage décalage y
     count = 0 # compte des blocs corrects
+    padding = 10
     ncol = int(m // (bs/f) - (f - 1))
     nrow = int(n // (bs/f) - (f - 1))
     for i in range(nrow):
@@ -329,12 +330,12 @@ def decoupageSuperpose(b2,b1,bs,f,start,end): # f = facteur de recouvrement
                 tabx.append(xm)
                 taby.append(ym)
                 # if np.sqrt(xm**2 + ym**2) < 10 :
-                if npl.norm([x,y], np.inf) < 10
+                if npl.norm([xm,ym], np.inf) < 10:
                     count += 1
     return tabx,taby,count
 
 # DONNE LE NOMBRE DE BLOCS AVEC DECALGE < SEUIL
-def countCorrect(tab,seuil, verbose=False):
+def countCorrect(tab, seuil, verbose=False):
 
     for i in range(len(tab[0])):
         # distance = np.sqrt(tab[0][i]**2 + tab[1][i]**2)
